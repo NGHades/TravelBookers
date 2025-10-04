@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🧩 Checkout repository
+      - name: Checkout repository
         uses: actions/checkout@v5
 
-      - name: 🐍 Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.10"
@@ -24,9 +24,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install black
 
-      - name: 🖤 Run Black (check only)
+      - name: Run Black (check only)
         run: |
-          black --check .
+          black .
 
   explore:
     name: Explore GitHub Actions
