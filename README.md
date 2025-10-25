@@ -25,7 +25,7 @@ We will attempt to host this on a cloud web host, web service and database; if t
 8. We hope to set up further CI/CD to automatically deploy new changes to the web host when a commit is made to GitHub. Maybe through docker we'll see...
 
 ### ***Visual explanation:***
-#### Not really sure what to put here at this point in the project
+Node Download -> install Vite -> Select React >> JavaScript -> Run **`npm install`** -> run **`npm run dev`**
 
 ### ***Known issues:***
 - Backend technologies still under review.
