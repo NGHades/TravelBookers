@@ -6,7 +6,13 @@
 
 ### ***Project overview***
 
-##### This project consists of the files necessary to run the Travel Bookers web presence. This includes a home page for displaying vehicles, favoriting vehicles, filtering, and navigation, an info page for additional vehicle information, a checkout page for renters to input their information, and an administrative page to view renter information and overdue vehicles as well as add new vehicles to the system. We will attempt to host this on a cloud web host, web service and database; if this doesn't work we will fall back on a local system for the sake of completing the project. 
+##### This project consists of the files necessary to run the Travel Bookers web presence. This includes... 
+- A home page for displaying vehicles, favoriting vehicles, filtering, and navigation
+- An info page for additional vehicle information
+- A checkout page for renters to input their information
+- An administrative page to view renter information and overdue vehicles as well as add new vehicles to the system
+
+We will attempt to host this on a cloud web host, web service and database; if this doesn't work we will fall back on a local system for the sake of completing the project. 
 
 ### ***Development Environment Setup Instructions:***
 1. Install the latest version of Node.js on your machine from the **[Official Page](https://nodejs.org/en)**
