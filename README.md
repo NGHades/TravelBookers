@@ -3,6 +3,12 @@
 ## The collection of files that establishes the online presence for car rental company "Tavel Bookers".
 
 ### ***Table of Contents***
+- [Development Environment Setup Instructions](#development-environment-setup-instructions)
+- [Visual Explanation](#visual-explanation)
+- [Known Issues](#known-issues)
+- [To-do Items](#to-do-items)
+- [Technologies Used](#technologies-used)
+
 
 ### ***Project overview***
 
