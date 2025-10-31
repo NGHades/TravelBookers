@@ -3,6 +3,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import cors from "cors";
 import dotenv from "dotenv";
+import { aj } from "./lib/arcjet.js"; //arcjet rate limiting middleware
 
 import vehicleRoutes from "./routes/vehicleRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
@@ -77,3 +78,4 @@ initDB().then(() => {
     console.log("Server is running on port " + PORT);
   });
 });
+
