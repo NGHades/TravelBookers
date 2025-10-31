@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700;800&display=swap");
 
 @custom-variant dark (&:is(.dark *));
 
@@ -128,7 +128,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Nunito', sans-serif;
+    font-family: "Nunito", sans-serif;
   }
 }
 
@@ -189,4 +189,55 @@
 
 html {
   font-size: var(--font-size);
+}
+
+.container {
+  background-color: #022d57;
+  padding: 1rem 1.5rem;
+}
+
+.content {
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.logo img {
+  height: 96px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.nav-links a {
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #f5b800;
+}
+
+.sign-in {
+  background-color: #f5b800;
+  color: #022d57;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sign-in:hover {
+  background-color: #ffd700;
 }
