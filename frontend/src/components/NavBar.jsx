@@ -1,10 +1,11 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import "../css/NavBar.css"; // make sure your CSS file is updated
 
 function NavBar() {
   return (
-    <header className="container">
-      <div className="content">
+    <header className="navbar">
+      <div className="navbar-content">
         <div className="logo">
           <img src="/TravelBookersLogo.svg" alt="Travel Bookers" />
         </div>
@@ -14,6 +15,7 @@ function NavBar() {
           <Link to="/deals">Deals</Link>
           <Link to="/locations">Locations</Link>
         </nav>
+        <button className="sign-in">Sign In</button>
       </div>
     </header>
   );

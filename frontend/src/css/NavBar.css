@@ -1,0 +1,66 @@
+/* Reset default browser spacing */
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Full-width navbar background */
+.navbar {
+  width: 100%;
+  background-color: #022d57;
+  padding: 1rem 1.5rem;
+}
+
+/* Inner content — stretch full width or center it */
+.navbar-content {
+  display: flex;
+  justify-content: space-between; /* logo left, nav right */
+  align-items: center;
+  width: 100%;
+  max-width: 1120px; /* remove this if you want logo + links flush to edges */
+  margin: 0 auto; /* centers content */
+}
+
+/* Logo size */
+.logo img {
+  height: 96px;
+}
+
+/* Navigation links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem; /* space between links */
+}
+
+.nav-links a {
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.nav-links a:hover {
+  color: #f5b800;
+}
+
+/* Sign-in button */
+.sign-in {
+  background-color: #f5b800;
+  color: #022d57;
+  padding: 0.5rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.sign-in:hover {
+  background-color: #ffd700;
+}
