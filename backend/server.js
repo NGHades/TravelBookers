@@ -56,6 +56,16 @@ app.use(async (req, res, next) => {
 
 app.use("/api/vehicles", vehicleRoutes); //call vehicle routes when connected endpoint
 
+// Add a simple root route
+app.get("/", (req, res) => {
+  res.json({
+    message: "TravelBookers API is running!",
+    endpoints: {
+      vehicles: "/api/vehicles",
+    },
+  });
+});
+
 async function initDB() {
   try {
     await sql` 
