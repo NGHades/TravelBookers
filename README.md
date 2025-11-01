@@ -45,5 +45,5 @@ We will attempt to host this on a cloud web host, web service and database; if t
 ### ***Technologies Used:***
 - ***Frontend:*** React.js Framework + Vite
 - ***Backend:*** Node.js, Express.js
-- ***Database:*** TBD
+- ***Database:*** NeonDB
 - ***Webhost:*** TBD
