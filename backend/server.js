@@ -7,7 +7,7 @@ import { aj } from "./lib/arcjet.js"; //arcjet rate limiting middleware
 
 import vehicleRoutes from "./routes/vehicleRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
-import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
+// import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
 
 dotenv.config(); // Load environment variables from .env file
 

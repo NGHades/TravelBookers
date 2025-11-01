@@ -1,4 +1,4 @@
-import expres from "express";
+import express from "express";
 import {
   createVehicle,
   getVehicles,
@@ -7,7 +7,7 @@ import {
   deleteVehicle,
 } from "../controllers/vehicleController.js"; //import route logic from controller
 
-const router = expres.Router();
+const router = express.Router();
 
 router.get("/", getVehicles);
 router.get("/:id", getVehicle);

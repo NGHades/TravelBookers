@@ -4,7 +4,7 @@ function Home() {
   return (
     <div className="home-empty">
       <h2>Home Page</h2>
-      <p>Thank you for the epic help</p>
+      <p>Home page under construction</p>
     </div>
   );
 }
