@@ -20,8 +20,8 @@ body {
   justify-content: space-between; /* logo left, nav right */
   align-items: center;
   width: 100%;
-  max-width: 1120px; /* remove this if you want logo + links flush to edges */
-  margin: 0 auto; /* centers content */
+  /* max-width: 1120px; /* remove this if you want logo + links flush to edges */
+  /* margin: 0 auto; /* centers content */
 }
 
 /* Logo size */
