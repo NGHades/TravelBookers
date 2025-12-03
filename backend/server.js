@@ -88,16 +88,8 @@ app.get("/", (req, res) => {
 
 async function initDB() {
   try {
-    // Drop all tables in reverse dependency order to avoid foreign key constraint issues
-    await sql`DROP TABLE IF EXISTS comments CASCADE`;
-    await sql`DROP TABLE IF EXISTS rentals CASCADE`;
-    await sql`DROP TABLE IF EXISTS favorites CASCADE`;
-    await sql`DROP TABLE IF EXISTS images CASCADE`;
-    await sql`DROP TABLE IF EXISTS vehicles CASCADE`;
-    await sql`DROP TABLE IF EXISTS users CASCADE`;
-    await sql`DROP TABLE IF EXISTS roles CASCADE`;
-
     // Create Roles table first (no dependencies)
+    // Using IF NOT EXISTS to preserve existing tables and data
     await sql`
       CREATE TABLE IF NOT EXISTS roles (
         role_id SERIAL PRIMARY KEY,
@@ -221,7 +213,7 @@ async function initDB() {
       console.log("Admin user already exists");
     }
 
-    console.log("Database initialized successfully");
+    console.log("Database initialized successfully - tables checked/created, existing data preserved");
   } catch (error) {
     console.error("Error initializing database:", error);
     console.error("Error details:", error.message);

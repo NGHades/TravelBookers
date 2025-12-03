@@ -8,6 +8,7 @@ import Locations from "./pages/Locations";
 import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminVehicles from "./pages/AdminVehicles";
+import VehicleDetail from "./pages/VehicleDetail";
 
 function App() {
   const location = useLocation();
@@ -18,6 +19,7 @@ function App() {
       {!isAdminRoute && <NavBar />}
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/vehicles/:id" element={<VehicleDetail />} />
         <Route path="/reservations" element={<Reservations />} />
         <Route path="/deals" element={<Deals />} />
         <Route path="/locations" element={<Locations />} />

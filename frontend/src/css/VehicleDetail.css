@@ -1,0 +1,410 @@
+.vehicle-detail {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+@media (max-width: 768px) {
+  .vehicle-detail {
+    padding: 1rem;
+  }
+}
+
+.back-btn {
+  margin-bottom: 2rem;
+  padding: 0.75rem 1.5rem;
+  background: #fff;
+  border: 2px solid #cbd5f1;
+  border-radius: 10px;
+  color: #022d57;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 1rem;
+}
+
+.back-btn:hover {
+  background: #f5b800;
+  border-color: #f5b800;
+  color: #022d57;
+}
+
+.vehicle-detail-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-top: 1rem;
+}
+
+/* Carousel Styles with Swiper */
+.vehicle-carousel {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.carousel-main-swiper {
+  width: 100%;
+  max-width: 700px;
+  height: 400px;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 0 auto 1.5rem auto;
+  background: #f3f4f6;
+}
+
+@media (max-width: 768px) {
+  .carousel-main-swiper {
+    height: 300px;
+    max-width: 100%;
+    border-radius: 12px;
+  }
+}
+
+.carousel-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Swiper Navigation Buttons */
+.carousel-main-swiper .swiper-button-next,
+.carousel-main-swiper .swiper-button-prev {
+  color: #022d57;
+  background: rgba(255, 255, 255, 0.9);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.carousel-main-swiper .swiper-button-next::after,
+.carousel-main-swiper .swiper-button-prev::after {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.carousel-main-swiper .swiper-button-next:hover,
+.carousel-main-swiper .swiper-button-prev:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.carousel-main-swiper .swiper-button-disabled {
+  opacity: 0.35;
+}
+
+/* Thumbnail Swiper */
+.carousel-thumbnails-swiper {
+  width: 100%;
+  max-width: 700px;
+  height: 100px;
+  margin: 0 auto 2rem auto;
+}
+
+@media (max-width: 768px) {
+  .carousel-thumbnails-swiper {
+    max-width: 100%;
+    height: 80px;
+  }
+}
+
+.carousel-thumbnails-swiper .swiper-slide {
+  width: 100px;
+  height: 100px;
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+  cursor: pointer;
+}
+
+.carousel-thumbnails-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+  border: 2px solid #f5b800;
+  border-radius: 8px;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Vehicle Info Section */
+.vehicle-info-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.vehicle-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #022d57;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .vehicle-title {
+    font-size: 1.5rem;
+  }
+}
+
+.vehicle-meta {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.availability-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.availability-badge.available {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.availability-badge.unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.vehicle-price {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #f5b800;
+}
+
+.vehicle-description {
+  margin-top: 1rem;
+}
+
+.vehicle-description h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 0.5rem;
+}
+
+.vehicle-description p {
+  color: #475569;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* Comments and Ratings Section */
+.comments-ratings-section {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 2px solid #e2e8f0;
+}
+
+.comments-ratings-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 1.5rem;
+}
+
+.rating-summary {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.rating-number {
+  font-size: 3rem;
+  font-weight: 700;
+  color: #022d57;
+}
+
+.rating-stars {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.star {
+  font-size: 1.5rem;
+  color: #e2e8f0;
+}
+
+.star.filled {
+  color: #f5b800;
+}
+
+.rating-count {
+  color: #475569;
+  font-size: 1rem;
+}
+
+/* Add Review Form */
+.add-review-form {
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.add-review-form h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 1rem;
+}
+
+.review-rating-input {
+  margin-bottom: 1rem;
+}
+
+.review-rating-input label {
+  display: block;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.rating-input-stars {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.star-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.star-btn:hover {
+  transform: scale(1.2);
+  color: #f5b800;
+}
+
+.review-comment-input {
+  margin-bottom: 1rem;
+}
+
+.review-comment-input label {
+  display: block;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.5rem;
+}
+
+.review-comment-input textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #cbd5f1;
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 1rem;
+  resize: vertical;
+}
+
+.review-comment-input textarea:focus {
+  outline: none;
+  border-color: #f5b800;
+}
+
+.submit-review-btn {
+  padding: 0.75rem 2rem;
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  color: #022d57;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.submit-review-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 184, 0, 0.3);
+}
+
+/* Reviews List */
+.reviews-list {
+  margin-top: 2rem;
+}
+
+.reviews-list h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 1rem;
+}
+
+.review-item {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.reviewer-name {
+  font-weight: 600;
+  color: #022d57;
+}
+
+.review-rating {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.review-date {
+  color: #94a3b8;
+  font-size: 0.9rem;
+  margin-left: auto;
+}
+
+.review-text {
+  color: #475569;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.loading,
+.error {
+  text-align: center;
+  padding: 2rem;
+  color: #475569;
+  font-size: 1.1rem;
+}
+
+.error {
+  color: #ef4444;
+  background: #fee2e2;
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
