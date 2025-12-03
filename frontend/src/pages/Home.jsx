@@ -5,7 +5,7 @@ import "../css/Home.css";
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const PAGE_SIZE = 9;
 
-function Home() {
+function Home({ onRequireSignIn }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [images, setImages] = useState({}); // Map vehicle_id to array of images
@@ -118,6 +118,7 @@ function Home() {
               vehicle={vehicle}
               imageUrl={firstImage}
               key={vehicle.vehicle_id}
+              onRequireSignIn={onRequireSignIn}
             />
           );
         })}

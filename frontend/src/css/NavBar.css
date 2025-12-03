@@ -68,6 +68,11 @@ body {
   opacity: 1;
 }
 
+/* Sign-in container with dropdown */
+.sign-in-container {
+  position: relative;
+}
+
 /* Sign-in button */
 .sign-in {
   background-color: #f5b800;
@@ -83,4 +88,151 @@ body {
 
 .sign-in:hover {
   background-color: #ffd700;
+}
+
+/* Dropdown menu */
+.sign-in-dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  padding: 1.5rem;
+  min-width: 320px;
+  z-index: 1000;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Dropdown form */
+.sign-in-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.dropdown-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.dropdown-form-group label {
+  color: #022d57;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.dropdown-form-group input {
+  padding: 0.75rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  color: #022d57;
+}
+
+.dropdown-form-group input:focus {
+  outline: none;
+  border-color: #f5b800;
+  box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.1);
+}
+
+.dropdown-form-group input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+}
+
+.dropdown-form-group input::placeholder {
+  color: #999;
+}
+
+.dropdown-error {
+  background-color: #fee;
+  color: #c33;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #fcc;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.dropdown-login-button {
+  background-color: #f5b800;
+  color: #022d57;
+  padding: 0.75rem;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.25rem;
+}
+
+.dropdown-login-button:hover:not(:disabled) {
+  background-color: #ffd700;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(245, 184, 0, 0.3);
+}
+
+.dropdown-login-button:disabled {
+  background-color: #ccc;
+  color: #666;
+  cursor: not-allowed;
+}
+
+.signup-link {
+  display: block;
+  text-align: center;
+  color: #022d57;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  margin-top: 0.5rem;
+  transition: color 0.3s ease;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 0.75rem;
+}
+
+.signup-link:hover {
+  color: #f5b800;
+  text-decoration: underline;
+}
+
+.admin-login-link-dropdown {
+  display: block;
+  text-align: center;
+  color: #022d57;
+  font-size: 0.9rem;
+  text-decoration: none;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #e0e0e0;
+  transition: color 0.3s ease;
+  font-weight: 600;
+}
+
+.admin-login-link-dropdown:hover {
+  color: #f5b800;
+  text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .sign-in-dropdown {
+    right: -1rem;
+    min-width: 280px;
+  }
 }

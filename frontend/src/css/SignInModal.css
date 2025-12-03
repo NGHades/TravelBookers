@@ -1,0 +1,130 @@
+.signin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.signin-modal {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2.5rem 2.25rem;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.35);
+  position: relative;
+  animation: signinModalFadeIn 0.2s ease-out;
+}
+
+@keyframes signinModalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.signin-modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: transparent;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: #64748b;
+}
+
+.signin-modal-title {
+  margin: 0 0 1.5rem 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #022d57;
+  text-align: center;
+}
+
+.signin-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.signin-modal-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.signin-modal-group label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.signin-modal-group input {
+  padding: 0.8rem 0.9rem;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.signin-modal-group input:focus {
+  outline: none;
+  border-color: #f5b800;
+  box-shadow: 0 0 0 3px rgba(245, 184, 0, 0.15);
+}
+
+.signin-modal-group input:disabled {
+  background-color: #f8fafc;
+  cursor: not-allowed;
+}
+
+.signin-modal-error {
+  background-color: #fef2f2;
+  color: #b91c1c;
+  border-radius: 10px;
+  border: 1px solid #fecaca;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.signin-modal-button {
+  margin-top: 0.5rem;
+  padding: 0.85rem 1.2rem;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  color: #022d57;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.signin-modal-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(245, 184, 0, 0.3);
+}
+
+.signin-modal-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 600px) {
+  .signin-modal {
+    margin: 0 1rem;
+    padding: 2rem 1.5rem;
+  }
+}
+
+

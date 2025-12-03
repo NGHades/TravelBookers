@@ -121,6 +121,11 @@
   background: rgba(255, 255, 255, 1);
 }
 
+.favorite-btn.favorited {
+  background: #ffe4f2;
+  color: #ff4b8b;
+}
+
 .vehicle-info {
   padding: 1.5rem;
 }
