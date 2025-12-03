@@ -14,6 +14,7 @@ function NavBar() {
           <Link to="/reservations">Reservations</Link>
           <Link to="/deals">Deals</Link>
           <Link to="/locations">Locations</Link>
+          <Link to="/admin/login" className="admin-login-link">Admin Login</Link>
         </nav>
         <button className="sign-in">Sign In</button>
       </div>

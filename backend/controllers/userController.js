@@ -180,3 +180,55 @@ export const deleteUser = async (req, res) => {
   }
 };
 
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Email and password are required" });
+  }
+
+  try {
+    // Find user by email
+    const user = await sql`
+      SELECT 
+        u.user_id,
+        u.username,
+        u.email,
+        u.password_hash,
+        u.role_id,
+        r.role_name
+      FROM users u
+      LEFT JOIN roles r ON u.role_id = r.role_id
+      WHERE u.email = ${email}
+    `;
+
+    if (user.length === 0) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user[0].password_hash);
+
+    if (!isValidPassword) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
+    }
+
+    // Return user data (excluding password_hash)
+    const { password_hash, ...userData } = user[0];
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      data: userData,
+    });
+  } catch (error) {
+    console.log("Error during login:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error" });
+  }
+};
+

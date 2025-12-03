@@ -48,6 +48,26 @@ body {
   color: #f5b800;
 }
 
+.admin-login-link {
+  position: relative;
+}
+
+.admin-login-link::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #f5b800;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.admin-login-link:hover::after {
+  opacity: 1;
+}
+
 /* Sign-in button */
 .sign-in {
   background-color: #f5b800;

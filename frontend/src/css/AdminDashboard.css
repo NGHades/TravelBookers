@@ -1,0 +1,325 @@
+.admin-dashboard {
+  padding: 2rem;
+  background: #f5f7fb;
+  min-height: calc(100vh - 96px);
+  color: #0f172a;
+}
+
+.admin-dashboard__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-dashboard__header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #022d57;
+}
+
+.admin-dashboard__header p {
+  margin: 0.25rem 0 0;
+  color: #475569;
+}
+
+.admin-dashboard__error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.admin-dashboard__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.admin-dashboard__controls input[type="search"] {
+  flex: 1;
+  min-width: 220px;
+  border: 1px solid #cbd5f5;
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.admin-dashboard__filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.admin-dashboard__filters label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #334155;
+  font-size: 0.9rem;
+}
+
+.admin-dashboard__filters select {
+  margin-top: 0.3rem;
+  border: 1px solid #cbd5f5;
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  min-width: 160px;
+}
+
+.admin-dashboard__table {
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
+  overflow: hidden;
+}
+
+.admin-dashboard__table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-dashboard__table th,
+.admin-dashboard__table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.admin-dashboard__table th {
+  background: #f8fafc;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.admin-dashboard__table tbody tr:hover {
+  background: #fdf6e3;
+}
+
+.vehicle-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.vehicle-make {
+  font-weight: 700;
+  color: #022d57;
+}
+
+.vehicle-model {
+  color: #475569;
+}
+
+.vehicle-description {
+  max-width: 280px;
+  color: #475569;
+}
+
+.status-badge {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.available {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.status-badge.unavailable {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.admin-dashboard__state {
+  padding: 3rem;
+  text-align: center;
+  color: #475569;
+}
+
+.admin-dashboard__pagination {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  font-weight: 600;
+}
+
+.primary-btn,
+.secondary-btn,
+.danger-btn {
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0.75rem 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  color: #022d57;
+}
+
+.secondary-btn {
+  background: #fff;
+  border: 1px solid #cbd5f1;
+  color: #022d57;
+}
+
+.danger-btn {
+  background: #ef4444;
+  color: #fff;
+}
+
+.primary-btn:hover,
+.secondary-btn:hover,
+.danger-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.primary-btn:disabled,
+.secondary-btn:disabled,
+.danger-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.add-vehicle-form {
+  background: #fff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.add-vehicle-form label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #334155;
+  gap: 0.3rem;
+}
+
+.add-vehicle-form input,
+.add-vehicle-form select,
+.add-vehicle-form textarea {
+  border: 1px solid #cbd5f5;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.add-vehicle-form textarea {
+  resize: vertical;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.admin-dashboard__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.admin-dashboard__card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.admin-dashboard__card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(2, 45, 87, 0.12);
+  border-color: #f5b800;
+}
+
+.admin-dashboard__card--coming-soon {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.admin-dashboard__card--coming-soon:hover {
+  transform: none;
+  border-color: transparent;
+}
+
+.card-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.admin-dashboard__card h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.5rem;
+  color: #022d57;
+}
+
+.admin-dashboard__card p {
+  margin: 0;
+  color: #475569;
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .admin-dashboard {
+    padding: 1.5rem 1rem;
+  }
+
+  .admin-dashboard__header {
+    flex-direction: column;
+  }
+
+  .admin-dashboard__controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .admin-dashboard__filters {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  .admin-dashboard__pagination {
+    justify-content: center;
+  }
+
+  .admin-dashboard__cards {
+    grid-template-columns: 1fr;
+  }
+}
+

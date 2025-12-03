@@ -13,6 +13,7 @@ import favoriteRoutes from "./routes/favoriteRoutes.js";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
+import bcrypt from "bcrypt";
 // import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
 
 dotenv.config(); // Load environment variables from .env file
@@ -181,9 +182,50 @@ async function initDB() {
       )
     `;
 
+    // Seed default roles
+    const existingRoles = await sql`SELECT role_id, role_name FROM roles`;
+    const roleNames = existingRoles.map(r => r.role_name);
+    
+    if (!roleNames.includes("admin")) {
+      await sql`INSERT INTO roles (role_name) VALUES ('admin') ON CONFLICT (role_name) DO NOTHING`;
+      console.log("Created 'admin' role");
+    }
+    
+    if (!roleNames.includes("customer")) {
+      await sql`INSERT INTO roles (role_name) VALUES ('customer') ON CONFLICT (role_name) DO NOTHING`;
+      console.log("Created 'customer' role");
+    }
+
+    // Get admin role_id
+    const adminRole = await sql`SELECT role_id FROM roles WHERE role_name = 'admin'`;
+    const adminRoleId = adminRole[0]?.role_id;
+
+    // Seed default admin user (only if it doesn't exist)
+    const existingAdmin = await sql`SELECT user_id FROM users WHERE email = 'admin@travelbookers.com'`;
+    
+    if (existingAdmin.length === 0 && adminRoleId) {
+      // Default admin credentials: admin@travelbookers.com / admin123
+      const defaultPassword = "admin123";
+      const saltRounds = 10;
+      const password_hash = await bcrypt.hash(defaultPassword, saltRounds);
+      
+      await sql`
+        INSERT INTO users (username, email, password_hash, role_id)
+        VALUES ('admin', 'admin@travelbookers.com', ${password_hash}, ${adminRoleId})
+        ON CONFLICT (email) DO NOTHING
+      `;
+      console.log("Created default admin user:");
+      console.log("  Email: admin@travelbookers.com");
+      console.log("  Password: admin123");
+    } else if (existingAdmin.length > 0) {
+      console.log("Admin user already exists");
+    }
+
     console.log("Database initialized successfully");
   } catch (error) {
-    console.log("Error initializing database:", error);
+    console.error("Error initializing database:", error);
+    console.error("Error details:", error.message);
+    console.error("Error stack:", error.stack);
   }
 }
 
