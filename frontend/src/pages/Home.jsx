@@ -11,6 +11,7 @@ function Home({ onRequireSignIn }) {
   const [images, setImages] = useState({}); // Map vehicle_id to array of images
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [imageError, setImageError] = useState("");
   const [page, setPage] = useState(1);
 
   // Fetch vehicles from API
@@ -27,30 +28,6 @@ function Home({ onRequireSignIn }) {
 
       const vehiclesData = data.data || [];
       setVehicles(vehiclesData);
-
-      // Fetch images for all vehicles
-      const imagePromises = vehiclesData.map(async (vehicle) => {
-        try {
-          const imgResponse = await fetch(
-            `${API_BASE}/api/images?vehicle_id=${vehicle.vehicle_id}`
-          );
-          const imgData = await imgResponse.json();
-          return {
-            vehicleId: vehicle.vehicle_id,
-            images: imgData.success ? imgData.data || [] : [],
-          };
-        } catch (err) {
-          console.error(`Error fetching images for vehicle ${vehicle.vehicle_id}:`, err);
-          return { vehicleId: vehicle.vehicle_id, images: [] };
-        }
-      });
-
-      const imageResults = await Promise.all(imagePromises);
-      const imagesMap = {};
-      imageResults.forEach(({ vehicleId, images: imgs }) => {
-        imagesMap[vehicleId] = imgs;
-      });
-      setImages(imagesMap);
     } catch (err) {
       setError(err.message || "Failed to fetch vehicles");
     } finally {
@@ -77,6 +54,58 @@ function Home({ onRequireSignIn }) {
     const start = (page - 1) * PAGE_SIZE;
     return filteredVehicles.slice(start, start + PAGE_SIZE);
   }, [filteredVehicles, page]);
+
+  // Fetch images for vehicles visible on the current page
+  useEffect(() => {
+    if (paginatedVehicles.length === 0) {
+      return;
+    }
+
+    const missingIds = paginatedVehicles
+      .map((vehicle) => vehicle.vehicle_id)
+      .filter((id) => !images[id]);
+
+    if (missingIds.length === 0) {
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const fetchImages = async () => {
+      try {
+        setImageError("");
+        const params = new URLSearchParams();
+        params.set("vehicle_ids", missingIds.join(","));
+        const response = await fetch(
+          `${API_BASE}/api/images?${params.toString()}`,
+          { signal: controller.signal }
+        );
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+          throw new Error(data.message || "Failed to fetch vehicle images");
+        }
+
+        const nextImages = {};
+        (data.data || []).forEach((image) => {
+          if (!nextImages[image.vehicle_id]) {
+            nextImages[image.vehicle_id] = [];
+          }
+          nextImages[image.vehicle_id].push(image);
+        });
+
+        setImages((prev) => ({ ...prev, ...nextImages }));
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        console.error("Error fetching vehicle images:", err);
+        setImageError(err.message || "Failed to fetch vehicle images");
+      }
+    };
+
+    fetchImages();
+
+    return () => controller.abort();
+  }, [paginatedVehicles, images]);
 
   // Reset to page 1 when search query changes
   useEffect(() => {
@@ -107,6 +136,7 @@ function Home({ onRequireSignIn }) {
 
       {loading && <div className="loading">Loading vehicles...</div>}
       {error && <div className="error">{error}</div>}
+      {imageError && <div className="error">{imageError}</div>}
 
       <div className="vehicles-grid">
         {paginatedVehicles.map((vehicle) => {

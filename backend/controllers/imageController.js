@@ -4,10 +4,29 @@ import { sql } from "../config/db.js";
 
 export const getImages = async (req, res) => {
   try {
-    const { vehicle_id } = req.query;
+    const { vehicle_id, vehicle_ids } = req.query;
 
     let images;
-    if (vehicle_id) {
+    if (vehicle_ids) {
+      const ids = vehicle_ids
+        .split(",")
+        .map((id) => parseInt(id.trim(), 10))
+        .filter((id) => Number.isInteger(id));
+
+      if (ids.length === 0) {
+        return res
+          .status(400)
+          .json({ success: false, message: "Invalid vehicle_ids parameter" });
+      }
+      const idList = ids.join(", ");
+
+      images = await sql`
+        SELECT *
+        FROM images
+        WHERE vehicle_id IN (${sql.unsafe(idList)})
+        ORDER BY vehicle_id ASC, image_id ASC
+      `;
+    } else if (vehicle_id) {
       images = await sql`
         SELECT * FROM images
         WHERE vehicle_id = ${vehicle_id}
