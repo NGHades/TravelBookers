@@ -1,16 +1,47 @@
 import { sql } from "../config/db.js";
+import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
 
 //CREATE READ UPDATE and DELETE operations (CRUD)
+
+// Helper function to upload image to Cloudinary from buffer
+const uploadImageToCloudinary = async (buffer, vehicleId, index = 0) => {
+  return new Promise((resolve, reject) => {
+    const timestamp = Date.now();
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "image",
+        folder: vehicleId ? `vehicles/${vehicleId}` : "vehicles/temp",
+        public_id: vehicleId 
+          ? `vehicle_${vehicleId}_${index}_${timestamp}` 
+          : `vehicle_temp_${index}_${timestamp}`,
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+
+    // Convert buffer to stream for Cloudinary
+    const readableStream = new Readable();
+    readableStream.push(buffer);
+    readableStream.push(null);
+    readableStream.pipe(uploadStream);
+  });
+};
 
 export const getVehicles = async (req, res) => {
   try {
     const vehicles = await sql`
-            SELECT * FROM vehicles
-            ORDER BY created_at DESC
-        `;
+      SELECT * FROM vehicles
+      ORDER BY created_at DESC
+    `;
 
-    console.log("fetched vehicles", vehicles);
-    res.status(200).json({ sucess: true, data: vehicles });
+    res.status(200).json({ success: true, data: vehicles });
   } catch (error) {
     console.log("Error fetching vehicles:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
@@ -18,37 +49,78 @@ export const getVehicles = async (req, res) => {
 };
 
 export const createVehicle = async (req, res) => {
-  const { name, image, price } = req.body; //works because we used express.json() middleware in server.js to parse JSON bodies
-  //req.body means data in the body of the HTTP request. This is used when pushing data to DB
+  // Handle both JSON and form-data
+  const make = req.body.make;
+  const model = req.body.model;
+  const year = req.body.year ? parseInt(req.body.year) : undefined;
+  const price_per_day = req.body.price_per_day ? parseFloat(req.body.price_per_day) : undefined;
+  const availability_status = req.body.availability_status !== undefined 
+    ? req.body.availability_status === 'true' || req.body.availability_status === true
+    : true;
+  const description = req.body.description || null;
+  const files = req.files || [];
 
-  if (!name || !image || !price) {
+  if (!make || !model || !year || !price_per_day) {
     return res
       .status(400)
-      .json({ success: false, message: "All fields are required" });
+      .json({
+        success: false,
+        message: "Make, model, year, and price_per_day are required",
+      });
   }
 
   try {
+    // Create the vehicle first
     const newVehicle = await sql`
-            INSERT INTO vehicles (name, image, price)
-            VALUES (${name}, ${image}, ${price})
-            RETURNING *
-        `;
+      INSERT INTO vehicles (make, model, year, price_per_day, availability_status, description)
+      VALUES (${make}, ${model}, ${year}, ${price_per_day}, ${availability_status}, ${description})
+      RETURNING *
+    `;
 
-    // postman free
-    console.log("Created new vehicle:", newVehicle);
+    const vehicleId = newVehicle[0].vehicle_id;
+
+    // Upload images to Cloudinary and store URLs in database
+    if (files && files.length > 0) {
+      const imageUploads = files.map((file, index) => 
+        uploadImageToCloudinary(file.buffer, vehicleId, index)
+      );
+
+      try {
+        const imageUrls = await Promise.all(imageUploads);
+        
+        // Store each image URL in the images table
+        for (const imageUrl of imageUrls) {
+          await sql`
+            INSERT INTO images (vehicle_id, image_url)
+            VALUES (${vehicleId}, ${imageUrl})
+          `;
+        }
+      } catch (uploadError) {
+        console.error("Error uploading images:", uploadError);
+        // Continue even if image upload fails - vehicle is already created
+      }
+    }
+
     res.status(201).json({ success: true, data: newVehicle[0] });
   } catch (error) {
-    console.log("Error creating vehicles:", error);
+    console.log("Error creating vehicle:", error);
     res.status(500).json({ success: false, message: "Internal Server Error" });
   }
 };
 
 export const getVehicle = async (req, res) => {
-  const { id } = req.params; //req.params means data in the URL parameters. This is used when getting data from DB
+  const { id } = req.params;
 
   try {
     const vehicle = await sql`
-        SELECT * FROM vehicles WHERE id = ${id}`;
+      SELECT * FROM vehicles WHERE vehicle_id = ${id}
+    `;
+
+    if (vehicle.length === 0) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Vehicle not found" });
+    }
 
     res.status(200).json({ success: true, data: vehicle[0] });
   } catch (error) {
@@ -58,21 +130,71 @@ export const getVehicle = async (req, res) => {
 };
 
 export const updateVehicle = async (req, res) => {
-  const { id } = req.params; //get from db
-  const { name, image, price } = req.body; //push update to db
+  const { id } = req.params;
+  // Handle both JSON and form-data
+  const make = req.body.make;
+  const model = req.body.model;
+  const year = req.body.year ? parseInt(req.body.year) : undefined;
+  const price_per_day = req.body.price_per_day ? parseFloat(req.body.price_per_day) : undefined;
+  const availability_status = req.body.availability_status !== undefined
+    ? req.body.availability_status === 'true' || req.body.availability_status === true
+    : undefined;
+  const description = req.body.description;
+  const files = req.files || [];
 
   try {
-    const updatedVehicle = await sql`
-            UPDATE vehicles
-            SET name = ${name}, image = ${image}, price = ${price}
-            WHERE id = ${id}
-            RETURNING *
-        `;
+    // Get current vehicle to preserve values not provided
+    const currentVehicle = await sql`
+      SELECT * FROM vehicles WHERE vehicle_id = ${id}
+    `;
 
-    if (updatedVehicle.length === 0) {
+    if (currentVehicle.length === 0) {
       return res
         .status(404)
         .json({ success: false, message: "Vehicle not found" });
+    }
+
+    const updateMake = make !== undefined ? make : currentVehicle[0].make;
+    const updateModel = model !== undefined ? model : currentVehicle[0].model;
+    const updateYear = year !== undefined ? year : currentVehicle[0].year;
+    const updatePricePerDay = price_per_day !== undefined ? price_per_day : currentVehicle[0].price_per_day;
+    const updateAvailabilityStatus = availability_status !== undefined ? availability_status : currentVehicle[0].availability_status;
+    const updateDescription = description !== undefined ? description : currentVehicle[0].description;
+
+    const updatedVehicle = await sql`
+      UPDATE vehicles
+      SET 
+        make = ${updateMake},
+        model = ${updateModel},
+        year = ${updateYear},
+        price_per_day = ${updatePricePerDay},
+        availability_status = ${updateAvailabilityStatus},
+        description = ${updateDescription}
+      WHERE vehicle_id = ${id}
+      RETURNING *
+    `;
+
+    // Upload new images to Cloudinary and store URLs in database
+    if (files && files.length > 0) {
+      const vehicleId = parseInt(id);
+      const imageUploads = files.map((file, index) => 
+        uploadImageToCloudinary(file.buffer, vehicleId, index)
+      );
+
+      try {
+        const imageUrls = await Promise.all(imageUploads);
+        
+        // Store each image URL in the images table
+        for (const imageUrl of imageUrls) {
+          await sql`
+            INSERT INTO images (vehicle_id, image_url)
+            VALUES (${vehicleId}, ${imageUrl})
+          `;
+        }
+      } catch (uploadError) {
+        console.error("Error uploading images:", uploadError);
+        // Continue even if image upload fails - vehicle is already updated
+      }
     }
 
     res.status(200).json({ success: true, data: updatedVehicle[0] });
@@ -83,14 +205,14 @@ export const updateVehicle = async (req, res) => {
 };
 
 export const deleteVehicle = async (req, res) => {
-  const { id } = req.params; //get specific id from db for vehicle to delete
+  const { id } = req.params;
 
   try {
     const deletedVehicle = await sql`
-            DELETE FROM vehicles
-            WHERE id = ${id}
-            RETURNING *
-        `;
+      DELETE FROM vehicles
+      WHERE vehicle_id = ${id}
+      RETURNING *
+    `;
 
     if (deletedVehicle.length === 0) {
       return res
