@@ -5,6 +5,7 @@ function AdminNavBar() {
   const navItems = [
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Vehicles", path: "/admin/vehicles" },
+    { label: "Users", path: "/admin/users" },
   ];
 
   return (
@@ -29,16 +30,13 @@ function AdminNavBar() {
         </nav>
 
         <div className="admin-navbar__actions">
-          <Link to="/" className="admin-navbar__action admin-navbar__action--home">
-            Back to site
-          </Link>
           <button
             type="button"
             className="admin-navbar__action admin-navbar__action--logout"
             onClick={() => {
               localStorage.removeItem("user");
               localStorage.removeItem("isAuthenticated");
-              window.location.href = "/admin/login";
+              window.location.href = "/";
             }}
           >
             Logout

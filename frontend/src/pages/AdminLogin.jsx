@@ -45,7 +45,7 @@ function AdminLogin() {
 
   return (
     <div className="admin-login-container">
-    <button onClick={() => navigate("/")}>Back to site</button>
+      <button className="admin-return-button" onClick={() => navigate("/")}>Back to site</button>
       <div className="admin-login-card">
         <div className="admin-login-header">
           <h1>Admin Login</h1>

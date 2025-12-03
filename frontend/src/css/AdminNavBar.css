@@ -72,11 +72,6 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.admin-navbar__action--home {
-  background: #ffffff;
-  color: #022d57;
-}
-
 .admin-navbar__action--logout {
   background: #f5b800;
   color: #022d57;

@@ -1,10 +1,12 @@
 .admin-login-container {
-  min-height: calc(100vh - 120px);
   display: flex;
   justify-content: center;
   align-items: center;
   background: linear-gradient(135deg, #022d57 0%, #034a7a 100%);
   padding: 2rem;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 .admin-login-card {
@@ -144,3 +146,19 @@
   }
 }
 
+.admin-return-button {
+  background-color: #f5b800;
+  color: #022d57;
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 0.5rem;
+  top: 1rem;
+  left: 1rem;
+  position: absolute;
+  z-index: 1000;
+}
