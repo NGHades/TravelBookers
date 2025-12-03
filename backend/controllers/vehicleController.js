@@ -1,6 +1,38 @@
 import { sql } from "../config/db.js";
+import cloudinary from "../config/cloudinary.js";
+import { Readable } from "stream";
 
 //CREATE READ UPDATE and DELETE operations (CRUD)
+
+// Helper function to upload image to Cloudinary from buffer
+const uploadImageToCloudinary = async (buffer, vehicleId, index = 0) => {
+  return new Promise((resolve, reject) => {
+    const timestamp = Date.now();
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        resource_type: "image",
+        folder: vehicleId ? `vehicles/${vehicleId}` : "vehicles/temp",
+        public_id: vehicleId 
+          ? `vehicle_${vehicleId}_${index}_${timestamp}` 
+          : `vehicle_temp_${index}_${timestamp}`,
+      },
+      (error, result) => {
+        if (error) {
+          console.error("Cloudinary upload error:", error);
+          reject(error);
+        } else {
+          resolve(result.secure_url);
+        }
+      }
+    );
+
+    // Convert buffer to stream for Cloudinary
+    const readableStream = new Readable();
+    readableStream.push(buffer);
+    readableStream.push(null);
+    readableStream.pipe(uploadStream);
+  });
+};
 
 export const getVehicles = async (req, res) => {
   try {
@@ -17,7 +49,16 @@ export const getVehicles = async (req, res) => {
 };
 
 export const createVehicle = async (req, res) => {
-  const { make, model, year, price_per_day, availability_status, description } = req.body;
+  // Handle both JSON and form-data
+  const make = req.body.make;
+  const model = req.body.model;
+  const year = req.body.year ? parseInt(req.body.year) : undefined;
+  const price_per_day = req.body.price_per_day ? parseFloat(req.body.price_per_day) : undefined;
+  const availability_status = req.body.availability_status !== undefined 
+    ? req.body.availability_status === 'true' || req.body.availability_status === true
+    : true;
+  const description = req.body.description || null;
+  const files = req.files || [];
 
   if (!make || !model || !year || !price_per_day) {
     return res
@@ -29,11 +70,36 @@ export const createVehicle = async (req, res) => {
   }
 
   try {
+    // Create the vehicle first
     const newVehicle = await sql`
       INSERT INTO vehicles (make, model, year, price_per_day, availability_status, description)
-      VALUES (${make}, ${model}, ${year}, ${price_per_day}, ${availability_status ?? true}, ${description ?? null})
+      VALUES (${make}, ${model}, ${year}, ${price_per_day}, ${availability_status}, ${description})
       RETURNING *
     `;
+
+    const vehicleId = newVehicle[0].vehicle_id;
+
+    // Upload images to Cloudinary and store URLs in database
+    if (files && files.length > 0) {
+      const imageUploads = files.map((file, index) => 
+        uploadImageToCloudinary(file.buffer, vehicleId, index)
+      );
+
+      try {
+        const imageUrls = await Promise.all(imageUploads);
+        
+        // Store each image URL in the images table
+        for (const imageUrl of imageUrls) {
+          await sql`
+            INSERT INTO images (vehicle_id, image_url)
+            VALUES (${vehicleId}, ${imageUrl})
+          `;
+        }
+      } catch (uploadError) {
+        console.error("Error uploading images:", uploadError);
+        // Continue even if image upload fails - vehicle is already created
+      }
+    }
 
     res.status(201).json({ success: true, data: newVehicle[0] });
   } catch (error) {
@@ -65,7 +131,16 @@ export const getVehicle = async (req, res) => {
 
 export const updateVehicle = async (req, res) => {
   const { id } = req.params;
-  const { make, model, year, price_per_day, availability_status, description } = req.body;
+  // Handle both JSON and form-data
+  const make = req.body.make;
+  const model = req.body.model;
+  const year = req.body.year ? parseInt(req.body.year) : undefined;
+  const price_per_day = req.body.price_per_day ? parseFloat(req.body.price_per_day) : undefined;
+  const availability_status = req.body.availability_status !== undefined
+    ? req.body.availability_status === 'true' || req.body.availability_status === true
+    : undefined;
+  const description = req.body.description;
+  const files = req.files || [];
 
   try {
     // Get current vehicle to preserve values not provided
@@ -98,6 +173,29 @@ export const updateVehicle = async (req, res) => {
       WHERE vehicle_id = ${id}
       RETURNING *
     `;
+
+    // Upload new images to Cloudinary and store URLs in database
+    if (files && files.length > 0) {
+      const vehicleId = parseInt(id);
+      const imageUploads = files.map((file, index) => 
+        uploadImageToCloudinary(file.buffer, vehicleId, index)
+      );
+
+      try {
+        const imageUrls = await Promise.all(imageUploads);
+        
+        // Store each image URL in the images table
+        for (const imageUrl of imageUrls) {
+          await sql`
+            INSERT INTO images (vehicle_id, image_url)
+            VALUES (${vehicleId}, ${imageUrl})
+          `;
+        }
+      } catch (uploadError) {
+        console.error("Error uploading images:", uploadError);
+        // Continue even if image upload fails - vehicle is already updated
+      }
+    }
 
     res.status(200).json({ success: true, data: updatedVehicle[0] });
   } catch (error) {
