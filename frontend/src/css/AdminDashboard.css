@@ -1,6 +1,6 @@
 .admin-dashboard {
   padding: 2rem;
-  background: #FDF7E1;
+  background: #989ba2;
   min-height: calc(100vh - 96px);
   color: #0f172a;
 }
@@ -370,4 +370,3 @@
     grid-template-columns: 1fr;
   }
 }
-

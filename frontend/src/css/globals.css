@@ -137,7 +137,7 @@ body {
   body {
     @apply text-foreground;
     font-family: "Nunito", sans-serif;
-    background-color: #FDF7E1;
+    background-color: #989ba2;
   }
 }
 
@@ -211,7 +211,7 @@ html {
   padding: 0;
   width: 100%;
   min-height: 100vh;
-  background-color: #FDF7E1;
+  background-color: #989ba2;
 }
 
 .content {
@@ -226,19 +226,19 @@ body {
 }
 
 .logo img {
-  height: 96px;
+  height: 40px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 4rem;
+  gap: 2rem;
 }
 
 .nav-links a {
   color: white;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
   text-decoration: none;
   transition: color 0.3s ease;
 }

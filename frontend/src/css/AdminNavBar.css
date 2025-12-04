@@ -2,16 +2,20 @@
   width: 100%;
   background: #022d57;
   border-bottom: 4px solid #f5b800;
-  padding: 1rem 2rem;
+  padding: 0.5rem 0; /* vertical padding only; inner content will be constrained */
   color: #fff;
 }
 
 .admin-navbar__content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start; /* brand at left; links will be centered absolutely */
   gap: 1.5rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  position: relative; /* needed for absolutely centered links */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem; /* horizontal inner padding */
 }
 
 .admin-navbar__brand {
@@ -19,6 +23,7 @@
   font-weight: 700;
   color: #fff;
   text-decoration: none;
+  flex: 0 0 auto;
 }
 
 .brand-highlight {
@@ -29,6 +34,10 @@
   display: flex;
   gap: 1.5rem;
   align-items: center;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
 }
 
 .admin-navbar__link {
@@ -59,6 +68,9 @@
   display: flex;
   gap: 0.75rem;
   align-items: center;
+  margin-left: auto; /* push actions to the far right */
+  padding-right: 1rem; /* keep a little space from the window edge */
+  flex: 0 0 auto;
 }
 
 .admin-navbar__action {
@@ -82,20 +94,39 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+  .admin-navbar__content {
+    flex-wrap: wrap;
+  }
+
+  /* On medium/narrow screens, stop using absolute centering so links can wrap naturally */
+  .admin-navbar__links {
+    position: static;
+    transform: none;
+    margin: 0.5rem 0;
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-navbar__actions {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 480px) {
   .admin-navbar__content {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
   }
 
   .admin-navbar__links {
-    width: 100%;
     justify-content: flex-start;
   }
 
   .admin-navbar__actions {
-    width: 100%;
     justify-content: flex-start;
   }
 }
-

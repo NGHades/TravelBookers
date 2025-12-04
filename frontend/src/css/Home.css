@@ -30,11 +30,12 @@
 
 .search-input {
   width: 100%;
-  padding: 0.75rem 1rem;
+  padding: 0.6rem 0.9rem;
   border: 2px solid #cbd5f1;
   border-radius: 10px;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-family: inherit;
+  box-sizing: border-box;
 }
 
 .search-input:focus {
@@ -158,14 +159,22 @@
 
 .vehicles-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
+  /* Fixed three-column layout with fixed card width so cards don't stretch */
+  grid-template-columns: repeat(3, 340px);
+  gap: 1.5rem;
   margin-bottom: 2rem;
+  box-sizing: border-box;
+  padding-right: 1rem; /* prevent touching the very edge */
+  justify-content: start; /* keep columns fixed and aligned to left */
 }
 
 @media (max-width: 1024px) {
   .vehicles-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(
+      2,
+      340px
+    ); /* two fixed columns on medium screens */
+    justify-content: center;
   }
 }
 
@@ -181,7 +190,7 @@
   }
 
   .vehicles-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, 340px);
   }
 }
 
@@ -191,7 +200,8 @@
   }
 
   .vehicles-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* single column on small screens */
+    justify-content: stretch;
   }
 
   .filters-sidebar {
@@ -366,4 +376,3 @@
   font-weight: 600;
   color: #475569;
 }
-
