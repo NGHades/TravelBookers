@@ -52,6 +52,30 @@ function VehicleCard({ vehicle, imageUrl, onRequireSignIn }) {
         {vehicle.description && (
           <p className="vehicle-description">{vehicle.description.substring(0, 100)}...</p>
         )}
+        
+        {/* Vehicle Specs */}
+        {(vehicle.passenger_count || vehicle.mpg || vehicle.drivetrain) && (
+          <div className="vehicle-specs">
+            {vehicle.passenger_count && (
+              <span className="spec-item">
+                <span className="spec-emoji">👤</span>
+                <span className="spec-text">{vehicle.passenger_count}</span>
+              </span>
+            )}
+            {vehicle.mpg && (
+              <span className="spec-item">
+                <span className="spec-emoji">⏲</span>
+                <span className="spec-text">{vehicle.mpg}</span>
+              </span>
+            )}
+            {vehicle.drivetrain && (
+              <span className="spec-item">
+                <span className="spec-emoji">𖥞</span>
+                <span className="spec-text">{vehicle.drivetrain.toUpperCase()}</span>
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

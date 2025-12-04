@@ -135,8 +135,9 @@ body {
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply text-foreground;
     font-family: "Nunito", sans-serif;
+    background-color: #FDF7E1;
   }
 }
 
@@ -208,6 +209,9 @@ html {
 .main-content {
   margin: 0;
   padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #FDF7E1;
 }
 
 .content {

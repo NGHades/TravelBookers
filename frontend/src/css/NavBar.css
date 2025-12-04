@@ -12,6 +12,8 @@ body {
   width: 100%;
   background-color: #022d57;
   padding: 1rem 1.5rem;
+  margin: 0;
+  box-sizing: border-box;
 }
 
 /* Inner content — stretch full width or center it */
