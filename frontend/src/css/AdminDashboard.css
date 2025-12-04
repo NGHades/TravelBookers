@@ -1,8 +1,31 @@
 .admin-dashboard {
   padding: 2rem;
-  background: #f5f7fb;
+  background: #989ba2;
   min-height: calc(100vh - 96px);
   color: #0f172a;
+}
+
+.admin-dashboard-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.admin-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: #022d57;
+}
+
+.admin-header p {
+  margin: 0;
+  color: #475569;
 }
 
 .admin-dashboard__header {
@@ -25,6 +48,15 @@
 }
 
 .admin-dashboard__error {
+  background: #fee2e2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+.admin-error-banner {
   background: #fee2e2;
   border: 1px solid #fecaca;
   color: #b91c1c;
@@ -103,6 +135,46 @@
   background: #fdf6e3;
 }
 
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
+  overflow: hidden;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 0.9rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid #edf2f7;
+}
+
+.admin-table th {
+  background: #f8fafc;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #64748b;
+}
+
+.admin-table tbody tr:hover {
+  background: #fdf6e3;
+}
+
+.admin-table-subtext {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
 .vehicle-name {
   display: flex;
   flex-direction: column;
@@ -158,6 +230,110 @@
   color: #475569;
 }
 
+.admin-overdue-pane {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 6px 18px rgba(185, 28, 28, 0.12);
+}
+
+.admin-overdue-pane--loading,
+.admin-overdue-pane--error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 16px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-overdue-header h2 {
+  margin: 0 0 0.25rem 0;
+  font-size: 1.2rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #b91c1c;
+}
+
+.admin-overdue-header p {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.9rem;
+}
+
+.admin-overdue-list {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-overdue-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 0.75rem 0.5rem;
+  border-top: 1px solid rgba(248, 113, 113, 0.4);
+}
+
+.admin-overdue-item:first-of-type {
+  border-top: none;
+  padding-top: 0.25rem;
+}
+
+.admin-overdue-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-overdue-title {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.admin-overdue-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: #b91c1c;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.admin-overdue-vehicle {
+  font-weight: 600;
+  color: #7f1d1d;
+}
+
+.admin-overdue-meta {
+  font-size: 0.9rem;
+  color: #7f1d1d;
+}
+
+.admin-overdue-dates {
+  font-size: 0.85rem;
+  color: #7f1d1d;
+  margin-top: 0.15rem;
+}
+
+.admin-overdue-actions {
+  flex-shrink: 0;
+}
+
+.admin-overdue-email-btn {
+  font-size: 0.85rem;
+  padding: 0.4rem 0.9rem;
+}
+
 .admin-dashboard__pagination {
   display: flex;
   justify-content: flex-end;
@@ -168,7 +344,9 @@
 }
 
 .primary-btn,
+.admin-primary-btn,
 .secondary-btn,
+.admin-secondary-btn,
 .danger-btn {
   border: none;
   border-radius: 10px;
@@ -183,7 +361,18 @@
   color: #022d57;
 }
 
+.admin-primary-btn {
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  color: #022d57;
+}
+
 .secondary-btn {
+  background: #fff;
+  border: 1px solid #cbd5f1;
+  color: #022d57;
+}
+
+.admin-secondary-btn {
   background: #fff;
   border: 1px solid #cbd5f1;
   color: #022d57;
@@ -218,11 +407,33 @@
   box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
 }
 
+.admin-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 10px 30px rgba(2, 45, 87, 0.08);
+}
+
+.admin-card h2 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  font-size: 1.4rem;
+  color: #022d57;
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 1rem;
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.25rem;
 }
 
 .add-vehicle-form label {
@@ -233,6 +444,15 @@
   gap: 0.3rem;
 }
 
+.admin-form-field label {
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  color: #334155;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+}
+
 .add-vehicle-form input,
 .add-vehicle-form select,
 .add-vehicle-form textarea {
@@ -241,6 +461,69 @@
   padding: 0.6rem 0.8rem;
   font-size: 1rem;
   font-family: inherit;
+}
+
+.admin-form input,
+.admin-form select,
+.admin-form textarea {
+  border: 1px solid #cbd5f5;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.insurance-checkbox {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.insurance-checkbox-text {
+  flex: 1;
+}
+
+.insurance-checkbox input[type="checkbox"] {
+  /* Hide native checkbox appearance */
+  appearance: none;
+  -webkit-appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #cbd5f5;
+  background: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.insurance-checkbox input[type="checkbox"]:hover {
+  border-color: #f5b800;
+  box-shadow: 0 0 0 2px rgba(245, 184, 0, 0.15);
+}
+
+.insurance-checkbox input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  border-color: #f5b800;
+}
+
+.insurance-checkbox input[type="checkbox"]::after {
+  content: "";
+  width: 12px;
+  height: 7px;
+  border-left: 2px solid #022d57;
+  border-bottom: 2px solid #022d57;
+  transform: rotate(-45deg) scale(0);
+  transform-origin: center;
+  transition: transform 0.15s ease;
+}
+
+.insurance-checkbox input[type="checkbox"]:checked::after {
+  transform: rotate(-45deg) scale(1);
 }
 
 .add-vehicle-form textarea {
@@ -370,4 +653,3 @@
     grid-template-columns: 1fr;
   }
 }
-

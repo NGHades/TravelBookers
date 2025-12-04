@@ -12,6 +12,8 @@ import imageRoutes from "./routes/imageRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
+import mailerLiteRoutes from "./routes/mailerLiteRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
 import bcrypt from "bcrypt";
 // import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
@@ -69,6 +71,8 @@ app.use("/api/images", imageRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/payments", paymentRoutes);
+app.use("/api/mailerlite", mailerLiteRoutes);
 
 // Add a simple root route
 app.get("/", (req, res) => {
@@ -82,6 +86,7 @@ app.get("/", (req, res) => {
       favorites: "/api/favorites",
       rentals: "/api/rentals",
       comments: "/api/comments",
+      mailerLite: "/api/mailerlite",
     },
   });
 });
@@ -120,9 +125,24 @@ async function initDB() {
         price_per_day DECIMAL(10, 2) NOT NULL,
         availability_status BOOLEAN DEFAULT TRUE,
         description TEXT,
+        vehicle_type VARCHAR(50),
+        mpg INTEGER,
+        passenger_count INTEGER,
+        drivetrain VARCHAR(10),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    // Add new columns to existing vehicles table if they don't exist
+    try {
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS vehicle_type VARCHAR(50)`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS mpg INTEGER`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS passenger_count INTEGER`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS drivetrain VARCHAR(10)`;
+    } catch (alterError) {
+      // Columns might already exist, which is fine
+      console.log("Note: Some columns may already exist in vehicles table");
+    }
 
     // Create Images table (depends on Vehicles)
     await sql`
@@ -155,10 +175,28 @@ async function initDB() {
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
         status VARCHAR(50) NOT NULL DEFAULT 'active',
+        insurance_purchased BOOLEAN DEFAULT FALSE,
+        first_name VARCHAR(100),
+        last_name VARCHAR(100),
+        phone VARCHAR(50),
+        email VARCHAR(255),
+        return_comment TEXT,
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
         FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE RESTRICT
       )
     `;
+
+    // Ensure rentals has new columns for existing databases
+    try {
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS insurance_purchased BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS first_name VARCHAR(100)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS last_name VARCHAR(100)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS phone VARCHAR(50)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS email VARCHAR(255)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS return_comment TEXT`;
+    } catch (alterError) {
+      console.log("Note: some rentals columns may already exist");
+    }
 
     // Create Comments table (depends on Users and Vehicles)
     await sql`

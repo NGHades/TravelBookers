@@ -131,6 +131,18 @@ function AdminVehicles() {
         if (formData.description) {
           formDataToSend.append("description", formData.description);
         }
+        if (formData.vehicle_type) {
+          formDataToSend.append("vehicle_type", formData.vehicle_type);
+        }
+        if (formData.mpg !== null && formData.mpg !== undefined && formData.mpg !== "") {
+          formDataToSend.append("mpg", formData.mpg);
+        }
+        if (formData.passenger_count !== null && formData.passenger_count !== undefined && formData.passenger_count !== "") {
+          formDataToSend.append("passenger_count", formData.passenger_count);
+        }
+        if (formData.drivetrain) {
+          formDataToSend.append("drivetrain", formData.drivetrain);
+        }
         
         // Append all images
         formData.images.forEach((image) => {
@@ -337,7 +349,6 @@ function AdminVehicles() {
             Next
           </button>
         </footer>
-        )}
       </section>
       {showDeleteModal && (
         <ConfirmModal
@@ -362,6 +373,10 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
     price_per_day: "",
     availability_status: true,
     description: "",
+    vehicle_type: "",
+    mpg: "",
+    passenger_count: "",
+    drivetrain: "",
   });
   const [selectedImages, setSelectedImages] = useState([]);
 
@@ -374,6 +389,10 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
         price_per_day: initialData.price_per_day,
         availability_status: initialData.availability_status,
         description: initialData.description || "",
+        vehicle_type: initialData.vehicle_type || "",
+        mpg: initialData.mpg || "",
+        passenger_count: initialData.passenger_count || "",
+        drivetrain: initialData.drivetrain || "",
       });
     } else {
       setForm({
@@ -383,6 +402,10 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
         price_per_day: "",
         availability_status: true,
         description: "",
+        vehicle_type: "",
+        mpg: "",
+        passenger_count: "",
+        drivetrain: "",
       });
     }
     // Reset images when form is reset or mode changes
@@ -396,7 +419,7 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
       [name]:
         name === "availability_status"
           ? value === "true"
-          : name === "year" || name === "price_per_day"
+          : name === "year" || name === "price_per_day" || name === "mpg" || name === "passenger_count"
           ? value
           : value,
     }));
@@ -417,6 +440,8 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
       ...form,
       year: Number(form.year),
       price_per_day: Number(form.price_per_day),
+      mpg: form.mpg ? Number(form.mpg) : null,
+      passenger_count: form.passenger_count ? Number(form.passenger_count) : null,
       images: selectedImages,
     }, mode);
   };
@@ -475,6 +500,57 @@ function AddVehicleForm({ mode, initialData, onSubmit, onCancel, submitting }) {
           >
             <option value="true">Available</option>
             <option value="false">Unavailable</option>
+          </select>
+        </label>
+        <label>
+          Vehicle Type
+          <select
+            name="vehicle_type"
+            value={form.vehicle_type}
+            onChange={handleChange}
+          >
+            <option value="">Select type</option>
+            <option value="compact">Compact</option>
+            <option value="car">Car</option>
+            <option value="suv">SUV</option>
+            <option value="truck">Truck</option>
+            <option value="coupe">Coupe</option>
+          </select>
+        </label>
+        <label>
+          MPG
+          <input
+            name="mpg"
+            type="number"
+            min="0"
+            value={form.mpg}
+            onChange={handleChange}
+            placeholder="Optional"
+          />
+        </label>
+        <label>
+          Passenger Count
+          <input
+            name="passenger_count"
+            type="number"
+            min="1"
+            max="15"
+            value={form.passenger_count}
+            onChange={handleChange}
+            placeholder="Optional"
+          />
+        </label>
+        <label>
+          Drivetrain
+          <select
+            name="drivetrain"
+            value={form.drivetrain}
+            onChange={handleChange}
+          >
+            <option value="">Select drivetrain</option>
+            <option value="rwd">RWD</option>
+            <option value="fwd">FWD</option>
+            <option value="awd">AWD</option>
           </select>
         </label>
       </div>

@@ -3,7 +3,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #022d57 0%, #034a7a 100%);
+  background: #989ba2;
   padding: 2rem;
 }
 
@@ -166,4 +166,3 @@
     font-size: 1.75rem;
   }
 }
-

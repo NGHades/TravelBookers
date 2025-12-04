@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AdminNavBar from "../components/AdminNavBar";
+import AdminOverduePane from "../components/AdminOverduePane";
 import "../css/AdminDashboard.css";
 
 function AdminDashboard() {
@@ -14,6 +15,8 @@ function AdminDashboard() {
           </div>
         </header>
 
+        <AdminOverduePane />
+
         <div className="admin-dashboard__cards">
           <Link to="/admin/vehicles" className="admin-dashboard__card">
             <div className="card-icon">🚗</div>
@@ -21,17 +24,17 @@ function AdminDashboard() {
             <p>Manage your vehicle fleet, add new vehicles, update availability, and more.</p>
           </Link>
 
-          <div className="admin-dashboard__card admin-dashboard__card--coming-soon">
+          <Link to="/admin/rentals" className="admin-dashboard__card">
             <div className="card-icon">📋</div>
             <h2>Rentals</h2>
-            <p>View and manage vehicle rentals. Coming soon.</p>
-          </div>
+            <p>Review overdue vehicles, process returns, and manage reservations.</p>
+          </Link>
 
-          <div className="admin-dashboard__card admin-dashboard__card--coming-soon">
+          <Link to="/admin/users" className="admin-dashboard__card">
             <div className="card-icon">👥</div>
             <h2>Users</h2>
-            <p>Manage user accounts and permissions. Coming soon.</p>
-          </div>
+            <p>Manage customer accounts, roles, and access.</p>
+          </Link>
 
           <div className="admin-dashboard__card admin-dashboard__card--coming-soon">
             <div className="card-icon">💬</div>

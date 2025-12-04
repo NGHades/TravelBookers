@@ -146,7 +146,6 @@ function NavBar({ onRequireSignIn }) {
           <Link to="/reservations" onClick={handleReservationsClick}>
             Reservations
           </Link>
-          <Link to="/deals">Deals</Link>
           <Link to="/locations">Locations</Link>
         </nav>
         <div className="sign-in-container" ref={dropdownRef}>
@@ -221,15 +220,6 @@ function NavBar({ onRequireSignIn }) {
                     </div>
                   </div>
                   <div className="account-actions">
-                    <button
-                      type="button"
-                      className="dropdown-login-button"
-                      onClick={() =>
-                        alert("My Favorites coming soon! (Not yet implemented)")
-                      }
-                    >
-                      My Favorites
-                    </button>
                     <button
                       type="button"
                       className="dropdown-login-button sign-out-button"
