@@ -1,9 +1,20 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .admin-navbar {
   width: 100%;
   background: #022d57;
   border-bottom: 4px solid #f5b800;
   padding: 0.5rem 0; /* vertical padding only; inner content will be constrained */
   color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 1200;
 }
 
 .admin-navbar__content {

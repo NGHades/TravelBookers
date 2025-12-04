@@ -7,6 +7,7 @@ const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 function AdminRentals() {
   const [rentals, setRentals] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -45,7 +46,20 @@ function AdminRentals() {
   };
 
   useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/vehicles`);
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setVehicles(data.data || []);
+        }
+      } catch {
+        // ignore vehicle errors here; table will just fall back to ID
+      }
+    };
+
     fetchRentals();
+    fetchVehicles();
   }, []);
 
   const handleChange = (e) => {
@@ -165,6 +179,23 @@ function AdminRentals() {
 
   const activeRentals = rentals.filter((r) => r.status === "active");
   const inactiveRentals = rentals.filter((r) => r.status !== "active");
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
+  const getVehicleLabel = (vehicleId) => {
+    const vehicle = vehicles.find((v) => v.vehicle_id === vehicleId);
+    if (!vehicle) return `Vehicle #${vehicleId}`;
+    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
+  };
 
   return (
     <div className="admin-dashboard">
@@ -321,9 +352,11 @@ function AdminRentals() {
                               <span className="admin-table-subtext"> · {rental.phone}</span>
                             )}
                           </td>
-                          <td>{rental.vehicle_id}</td>
-                          <td>{rental.start_date}</td>
-                          <td>{rental.end_date}</td>
+                          <td>
+                            {rental.vehicle_id} — {getVehicleLabel(rental.vehicle_id)}
+                          </td>
+                          <td>{formatDate(rental.start_date)}</td>
+                          <td>{formatDate(rental.end_date)}</td>
                           <td>{rental.insurance_purchased ? "Yes" : "No"}</td>
                           <td>
                             <button
@@ -382,9 +415,11 @@ function AdminRentals() {
                               <span className="admin-table-subtext"> · {rental.phone}</span>
                             )}
                           </td>
-                          <td>{rental.vehicle_id}</td>
-                          <td>{rental.start_date}</td>
-                          <td>{rental.end_date}</td>
+                          <td>
+                            {rental.vehicle_id} — {getVehicleLabel(rental.vehicle_id)}
+                          </td>
+                          <td>{formatDate(rental.start_date)}</td>
+                          <td>{formatDate(rental.end_date)}</td>
                           <td>{rental.status}</td>
                           <td>{rental.insurance_purchased ? "Yes" : "No"}</td>
                         </tr>

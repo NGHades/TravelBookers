@@ -100,6 +100,12 @@ function AdminOverduePane() {
     });
   };
 
+  const getVehicleLabel = (vehicleId) => {
+    const v = vehicles.find((veh) => veh.vehicle_id === vehicleId);
+    if (!v) return `Vehicle #${vehicleId}`;
+    return `${v.year} ${v.make} ${v.model}`;
+  };
+
   return (
     <section className="admin-overdue-pane">
       <div className="admin-overdue-header">
@@ -120,7 +126,7 @@ function AdminOverduePane() {
                   {daysOverdue(rental.end_date) > 1 ? "s" : ""} overdue
                 </span>
                 <span className="admin-overdue-vehicle">
-                  Vehicle #{rental.vehicle_id} · Rental #{rental.rental_id}
+                  {getVehicleLabel(rental.vehicle_id)} · Rental #{rental.rental_id}
                 </span>
               </div>
               <div className="admin-overdue-meta">
