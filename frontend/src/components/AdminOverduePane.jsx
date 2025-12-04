@@ -7,6 +7,7 @@ function AdminOverduePane() {
   const [rentals, setRentals] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [vehicles, setVehicles] = useState([]);
 
   useEffect(() => {
     const fetchRentals = async () => {
@@ -26,8 +27,21 @@ function AdminOverduePane() {
       }
     };
 
+    const fetchVehicles = async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/vehicles`);
+        const data = await res.json();
+        if (res.ok && data.success) {
+          setVehicles(data.data || []);
+        }
+      } catch {
+        // ignore vehicle fetch errors; we'll just fall back to IDs
+      }
+    };
+
     // Initial load
     fetchRentals();
+    fetchVehicles();
 
     // Poll every 10 minutes for overdue changes
     const intervalId = setInterval(fetchRentals, 10 * 60 * 1000);
@@ -75,6 +89,17 @@ function AdminOverduePane() {
     return Math.max(1, Math.floor(diffMs / (1000 * 60 * 60 * 24)));
   };
 
+  const formatDate = (dateStr) => {
+    if (!dateStr) return "";
+    const d = new Date(dateStr);
+    if (Number.isNaN(d.getTime())) return dateStr;
+    return d.toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    });
+  };
+
   return (
     <section className="admin-overdue-pane">
       <div className="admin-overdue-header">
@@ -109,7 +134,7 @@ function AdminOverduePane() {
                 {rental.phone && <span className="admin-table-subtext"> · {rental.phone}</span>}
               </div>
               <div className="admin-overdue-dates">
-                Scheduled end date: <strong>{rental.end_date}</strong>
+                Scheduled end date: <strong>{formatDate(rental.end_date)}</strong>
               </div>
             </div>
             <div className="admin-overdue-actions">
