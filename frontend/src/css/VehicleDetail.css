@@ -202,6 +202,211 @@
   font-size: 1rem;
 }
 
+/* Vehicle Specifications */
+.vehicle-specifications {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.vehicle-specifications h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 1rem;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+}
+
+.spec-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.spec-label {
+  font-size: 0.875rem;
+  color: #64748b;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.spec-value {
+  font-size: 1.125rem;
+  color: #022d57;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .specs-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .vehicle-specifications {
+    padding: 1rem;
+  }
+}
+
+/* Booking Section */
+.booking-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: #fff;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.booking-section h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #022d57;
+  margin-bottom: 1.5rem;
+}
+
+.date-picker-container {
+  margin-bottom: 1.5rem;
+}
+
+.date-picker-container label {
+  display: block;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+}
+
+.date-picker-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid #cbd5f1;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #022d57;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+
+.date-picker-input:focus {
+  outline: none;
+  border-color: #f5b800;
+}
+
+.rental-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.rental-days {
+  font-weight: 600;
+  color: #022d57;
+  font-size: 1rem;
+}
+
+.rental-note {
+  color: #64748b;
+  font-size: 0.9rem;
+}
+
+/* Total Cost Section */
+.total-cost-section {
+  margin: 1.5rem 0;
+  padding: 1.5rem;
+  background: #f8fafc;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.cost-breakdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.cost-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  color: #475569;
+  font-size: 1rem;
+}
+
+.cost-line.total {
+  border-top: 2px solid #e2e8f0;
+  padding-top: 1rem;
+  margin-top: 0.5rem;
+  font-weight: 700;
+  color: #022d57;
+  font-size: 1.25rem;
+}
+
+.total-amount {
+  color: #f5b800;
+  font-size: 1.5rem;
+}
+
+/* Checkout Button */
+.checkout-btn {
+  width: 100%;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  color: #022d57;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 1rem;
+}
+
+.checkout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 184, 0, 0.3);
+}
+
+.checkout-btn:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .booking-section {
+    padding: 1rem;
+  }
+
+  .booking-section h2 {
+    font-size: 1.25rem;
+  }
+
+  .total-cost-section {
+    padding: 1rem;
+  }
+
+  .cost-line.total {
+    font-size: 1.1rem;
+  }
+
+  .total-amount {
+    font-size: 1.25rem;
+  }
+
+  .checkout-btn {
+    padding: 0.875rem 1.5rem;
+    font-size: 1rem;
+  }
+}
+
 /* Comments and Ratings Section */
 .comments-ratings-section {
   margin-top: 2rem;

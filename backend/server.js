@@ -120,9 +120,24 @@ async function initDB() {
         price_per_day DECIMAL(10, 2) NOT NULL,
         availability_status BOOLEAN DEFAULT TRUE,
         description TEXT,
+        vehicle_type VARCHAR(50),
+        mpg INTEGER,
+        passenger_count INTEGER,
+        drivetrain VARCHAR(10),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `;
+
+    // Add new columns to existing vehicles table if they don't exist
+    try {
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS vehicle_type VARCHAR(50)`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS mpg INTEGER`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS passenger_count INTEGER`;
+      await sql`ALTER TABLE vehicles ADD COLUMN IF NOT EXISTS drivetrain VARCHAR(10)`;
+    } catch (alterError) {
+      // Columns might already exist, which is fine
+      console.log("Note: Some columns may already exist in vehicles table");
+    }
 
     // Create Images table (depends on Vehicles)
     await sql`

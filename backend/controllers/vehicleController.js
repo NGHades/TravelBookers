@@ -58,6 +58,10 @@ export const createVehicle = async (req, res) => {
     ? req.body.availability_status === 'true' || req.body.availability_status === true
     : true;
   const description = req.body.description || null;
+  const vehicle_type = req.body.vehicle_type || null;
+  const mpg = req.body.mpg ? parseInt(req.body.mpg) : null;
+  const passenger_count = req.body.passenger_count ? parseInt(req.body.passenger_count) : null;
+  const drivetrain = req.body.drivetrain || null;
   const files = req.files || [];
 
   if (!make || !model || !year || !price_per_day) {
@@ -72,8 +76,8 @@ export const createVehicle = async (req, res) => {
   try {
     // Create the vehicle first
     const newVehicle = await sql`
-      INSERT INTO vehicles (make, model, year, price_per_day, availability_status, description)
-      VALUES (${make}, ${model}, ${year}, ${price_per_day}, ${availability_status}, ${description})
+      INSERT INTO vehicles (make, model, year, price_per_day, availability_status, description, vehicle_type, mpg, passenger_count, drivetrain)
+      VALUES (${make}, ${model}, ${year}, ${price_per_day}, ${availability_status}, ${description}, ${vehicle_type}, ${mpg}, ${passenger_count}, ${drivetrain})
       RETURNING *
     `;
 
@@ -140,6 +144,10 @@ export const updateVehicle = async (req, res) => {
     ? req.body.availability_status === 'true' || req.body.availability_status === true
     : undefined;
   const description = req.body.description;
+  const vehicle_type = req.body.vehicle_type;
+  const mpg = req.body.mpg !== undefined && req.body.mpg !== '' ? parseInt(req.body.mpg) : undefined;
+  const passenger_count = req.body.passenger_count !== undefined && req.body.passenger_count !== '' ? parseInt(req.body.passenger_count) : undefined;
+  const drivetrain = req.body.drivetrain;
   const files = req.files || [];
 
   try {
@@ -160,6 +168,10 @@ export const updateVehicle = async (req, res) => {
     const updatePricePerDay = price_per_day !== undefined ? price_per_day : currentVehicle[0].price_per_day;
     const updateAvailabilityStatus = availability_status !== undefined ? availability_status : currentVehicle[0].availability_status;
     const updateDescription = description !== undefined ? description : currentVehicle[0].description;
+    const updateVehicleType = vehicle_type !== undefined ? vehicle_type : currentVehicle[0].vehicle_type;
+    const updateMpg = mpg !== undefined ? mpg : currentVehicle[0].mpg;
+    const updatePassengerCount = passenger_count !== undefined ? passenger_count : currentVehicle[0].passenger_count;
+    const updateDrivetrain = drivetrain !== undefined ? drivetrain : currentVehicle[0].drivetrain;
 
     const updatedVehicle = await sql`
       UPDATE vehicles
@@ -169,7 +181,11 @@ export const updateVehicle = async (req, res) => {
         year = ${updateYear},
         price_per_day = ${updatePricePerDay},
         availability_status = ${updateAvailabilityStatus},
-        description = ${updateDescription}
+        description = ${updateDescription},
+        vehicle_type = ${updateVehicleType},
+        mpg = ${updateMpg},
+        passenger_count = ${updatePassengerCount},
+        drivetrain = ${updateDrivetrain}
       WHERE vehicle_id = ${id}
       RETURNING *
     `;
