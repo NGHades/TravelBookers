@@ -157,6 +157,53 @@
   min-width: 0;
 }
 
+.favorites-toggle-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.favorites-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 999px;
+  border: 2px solid #cbd5f1;
+  background: #fff;
+  color: #022d57;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favorites-toggle-btn.active {
+  background: linear-gradient(135deg, #f5b800, #ffcc4d);
+  border-color: transparent;
+  color: #022d57;
+  box-shadow: 0 6px 16px rgba(245, 184, 0, 0.35);
+}
+
+.favorites-toggle-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.favorites-count {
+  background: rgba(2, 45, 87, 0.1);
+  color: inherit;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+}
+
+.favorites-hint {
+  color: #475569;
+  font-size: 0.9rem;
+}
+
 .vehicles-grid {
   display: grid;
   /* Fixed three-column layout with fixed card width so cards don't stretch */

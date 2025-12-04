@@ -13,6 +13,7 @@ import favoriteRoutes from "./routes/favoriteRoutes.js";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import paymentRoutes from "./routes/paymentRoutes.js";
+import mailerLiteRoutes from "./routes/mailerLiteRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
 import bcrypt from "bcrypt";
 // import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
@@ -71,6 +72,7 @@ app.use("/api/favorites", favoriteRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/mailerlite", mailerLiteRoutes);
 
 // Add a simple root route
 app.get("/", (req, res) => {
@@ -84,6 +86,7 @@ app.get("/", (req, res) => {
       favorites: "/api/favorites",
       rentals: "/api/rentals",
       comments: "/api/comments",
+      mailerLite: "/api/mailerlite",
     },
   });
 });

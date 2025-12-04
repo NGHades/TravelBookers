@@ -4,7 +4,6 @@ import { Routes, Route, useLocation } from "react-router-dom";
 import Home from "./pages/Home";
 import NavBar from "./components/NavBar";
 import Reservations from "./pages/Reservations";
-import Deals from "./pages/Deals";
 import Locations from "./pages/Locations";
 import SignUp from "./pages/SignUp";
 import AdminLogin from "./pages/AdminLogin";
@@ -43,7 +42,6 @@ function App() {
         />
         <Route path="/checkout" element={<RentalCheckout />} />
         <Route path="/reservations" element={<Reservations />} />
-        <Route path="/deals" element={<Deals />} />
         <Route path="/locations" element={<Locations />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/admin/login" element={<AdminLogin />} />

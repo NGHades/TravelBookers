@@ -77,11 +77,31 @@ function RentalCheckout() {
           setProcessing(true);
           setError("");
 
+          // Get the authenticated user from localStorage
+          const storedUser = localStorage.getItem("user");
+          let userId = null;
+          if (storedUser) {
+            try {
+              const parsed = JSON.parse(storedUser);
+              if (parsed && parsed.user_id) {
+                userId = parsed.user_id;
+              }
+            } catch {
+              userId = null;
+            }
+          }
+
+          if (!userId) {
+            setError("We could not identify your account. Please sign in again and retry.");
+            localStorage.removeItem(PENDING_RENTAL_KEY);
+            return;
+          }
+
           const res = await fetch(`${API_BASE}/api/rentals`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              user_id: 1, // TODO: replace with authenticated user ID
+              user_id: userId,
               vehicle_id: pending.vehicleId,
               start_date: pending.startDate,
               end_date: pending.endDate,

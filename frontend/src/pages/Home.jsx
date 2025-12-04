@@ -1,11 +1,14 @@
 import VehicleCard from "../components/VehicleCard";
 import { useState, useEffect, useMemo } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../css/Home.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const PAGE_SIZE = 9;
 
 function Home({ onRequireSignIn }) {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [vehicles, setVehicles] = useState([]);
   const [images, setImages] = useState({}); // Map vehicle_id to array of images
@@ -13,6 +16,20 @@ function Home({ onRequireSignIn }) {
   const [error, setError] = useState("");
   const [imageError, setImageError] = useState("");
   const [page, setPage] = useState(1);
+  const [favoritesOnly, setFavoritesOnly] = useState(false);
+  const [currentUser, setCurrentUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    if (!storedUser) return null;
+    try {
+      return JSON.parse(storedUser);
+    } catch {
+      return null;
+    }
+  });
+  const [favorites, setFavorites] = useState([]);
+  const [favoritesLoading, setFavoritesLoading] = useState(false);
+  const [favoritesError, setFavoritesError] = useState("");
+  const [favoriteMutationId, setFavoriteMutationId] = useState(null);
   
   // Filter states
   const [vehicleTypeFilter, setVehicleTypeFilter] = useState("any");
@@ -44,6 +61,102 @@ function Home({ onRequireSignIn }) {
   useEffect(() => {
     fetchVehicles();
   }, []);
+
+  useEffect(() => {
+    const shouldShowFavorites = location.state?.showFavorites;
+    if (shouldShowFavorites && currentUser) {
+      setFavoritesOnly(true);
+      navigate(location.pathname, { replace: true, state: {} });
+    } else if (shouldShowFavorites && !currentUser) {
+      if (onRequireSignIn) {
+        onRequireSignIn("Sign in to view favorites");
+      }
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate, currentUser, onRequireSignIn]);
+
+  useEffect(() => {
+    const handleStorage = (event) => {
+      if (event.key === "user") {
+        if (event.newValue) {
+          try {
+            setCurrentUser(JSON.parse(event.newValue));
+          } catch {
+            setCurrentUser(null);
+          }
+        } else {
+          setCurrentUser(null);
+        }
+      }
+    };
+
+    const handleUserSignedIn = (event) => {
+      setCurrentUser(event.detail);
+    };
+
+    const handleUserSignedOut = () => {
+      setCurrentUser(null);
+    };
+
+    window.addEventListener("storage", handleStorage);
+    window.addEventListener("userSignedIn", handleUserSignedIn);
+    window.addEventListener("userSignedOut", handleUserSignedOut);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      window.removeEventListener("userSignedIn", handleUserSignedIn);
+      window.removeEventListener("userSignedOut", handleUserSignedOut);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setFavorites([]);
+      setFavoritesOnly(false);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const fetchFavorites = async () => {
+      try {
+        setFavoritesLoading(true);
+        setFavoritesError("");
+        const res = await fetch(
+          `${API_BASE}/api/favorites?user_id=${currentUser.user_id}`,
+          { signal: controller.signal }
+        );
+        const data = await res.json();
+
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Failed to load favorites");
+        }
+
+        setFavorites(data.data || []);
+      } catch (err) {
+        if (err.name === "AbortError") return;
+        setFavoritesError(err.message || "Failed to load favorites");
+      } finally {
+        setFavoritesLoading(false);
+      }
+    };
+
+    fetchFavorites();
+
+    return () => controller.abort();
+  }, [currentUser]);
+
+  const favoriteVehiclesSet = useMemo(() => {
+    return new Set(favorites.map((fav) => fav.vehicle_id));
+  }, [favorites]);
+
+  const favoriteMap = useMemo(() => {
+    const map = new Map();
+    favorites.forEach((fav) => {
+      map.set(fav.vehicle_id, fav);
+    });
+    return map;
+  }, [favorites]);
 
   // Get max price from vehicles for slider
   const maxVehiclePrice = useMemo(() => {
@@ -84,6 +197,12 @@ function Home({ onRequireSignIn }) {
       return true;
     });
 
+    if (favoritesOnly) {
+      filtered = filtered.filter((vehicle) =>
+        favoriteVehiclesSet.has(vehicle.vehicle_id)
+      );
+    }
+
     // Sort vehicles
     if (sortBy === "price-low") {
       filtered = [...filtered].sort((a, b) => 
@@ -96,7 +215,16 @@ function Home({ onRequireSignIn }) {
     }
 
     return filtered;
-  }, [vehicles, searchQuery, vehicleTypeFilter, maxPrice, passengerFilter, sortBy]);
+  }, [
+    vehicles,
+    searchQuery,
+    vehicleTypeFilter,
+    maxPrice,
+    passengerFilter,
+    sortBy,
+    favoritesOnly,
+    favoriteVehiclesSet,
+  ]);
 
   // Calculate pagination
   const totalPages = Math.max(1, Math.ceil(filteredVehicles.length / PAGE_SIZE));
@@ -160,7 +288,14 @@ function Home({ onRequireSignIn }) {
   // Reset to page 1 when filters change
   useEffect(() => {
     setPage(1);
-  }, [searchQuery, vehicleTypeFilter, maxPrice, passengerFilter, sortBy]);
+  }, [
+    searchQuery,
+    vehicleTypeFilter,
+    maxPrice,
+    passengerFilter,
+    sortBy,
+    favoritesOnly,
+  ]);
   
   // Update max price slider when vehicles load
   useEffect(() => {
@@ -173,6 +308,60 @@ function Home({ onRequireSignIn }) {
     e.preventDefault();
     // Search is handled by filtering, just reset to page 1
     setPage(1);
+  };
+
+  const handleToggleFavorite = async (vehicle) => {
+    if (!currentUser) {
+      if (onRequireSignIn) {
+        onRequireSignIn("Sign in to manage favorites");
+      }
+      return;
+    }
+
+    const existingFavorite = favoriteMap.get(vehicle.vehicle_id);
+
+    try {
+      setFavoriteMutationId(vehicle.vehicle_id);
+      setFavoritesError("");
+
+      if (existingFavorite) {
+        const res = await fetch(
+          `${API_BASE}/api/favorites/${existingFavorite.favorite_id}`,
+          {
+            method: "DELETE",
+          }
+        );
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Failed to remove favorite");
+        }
+        setFavorites((prev) =>
+          prev.filter((fav) => fav.favorite_id !== existingFavorite.favorite_id)
+        );
+      } else {
+        const res = await fetch(`${API_BASE}/api/favorites`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            user_id: currentUser.user_id,
+            vehicle_id: vehicle.vehicle_id,
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok || !data.success) {
+          throw new Error(data.message || "Failed to add favorite");
+        }
+        setFavorites((prev) => [...prev, data.data]);
+      }
+    } catch (err) {
+      setFavoritesError(
+        err.message || "Something went wrong updating favorites."
+      );
+    } finally {
+      setFavoriteMutationId(null);
+    }
   };
 
   return (
@@ -273,6 +462,37 @@ function Home({ onRequireSignIn }) {
           {loading && <div className="loading">Loading vehicles...</div>}
           {error && <div className="error">{error}</div>}
           {imageError && <div className="error">{imageError}</div>}
+          {favoritesError && (
+            <div className="error" style={{ marginBottom: "1rem" }}>
+              {favoritesError}
+            </div>
+          )}
+
+          <div className="favorites-toggle-bar">
+            <button
+              type="button"
+              className={`favorites-toggle-btn ${
+                favoritesOnly ? "active" : ""
+              }`}
+              onClick={() => setFavoritesOnly((prev) => !prev)}
+              disabled={!currentUser || favoritesLoading}
+            >
+              {favoritesOnly ? "Show All Vehicles" : "Show Favorites Only"}
+              {currentUser && (
+                <span className="favorites-count">
+                  {favorites.length} saved
+                </span>
+              )}
+            </button>
+            {!currentUser && (
+              <span className="favorites-hint">
+                Sign in to save and view favorites.
+              </span>
+            )}
+            {favoritesLoading && currentUser && (
+              <span className="favorites-hint">Loading favorites...</span>
+            )}
+          </div>
 
           <div className="vehicles-grid">
             {paginatedVehicles.map((vehicle) => {
@@ -285,6 +505,9 @@ function Home({ onRequireSignIn }) {
                   imageUrl={firstImage}
                   key={vehicle.vehicle_id}
                   onRequireSignIn={onRequireSignIn}
+                  isFavorited={favoriteVehiclesSet.has(vehicle.vehicle_id)}
+                  onToggleFavorite={handleToggleFavorite}
+                  favoriteBusy={favoriteMutationId === vehicle.vehicle_id}
                 />
               );
             })}

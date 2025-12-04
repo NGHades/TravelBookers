@@ -1,23 +1,25 @@
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
 
-function VehicleCard({ vehicle, imageUrl, onRequireSignIn }) {
+function VehicleCard({
+  vehicle,
+  imageUrl,
+  onRequireSignIn,
+  isFavorited = false,
+  onToggleFavorite,
+  favoriteBusy = false,
+}) {
   const navigate = useNavigate();
-  const [isFavorited, setIsFavorited] = useState(false);
 
   function onFavoriteClick(e) {
     e.stopPropagation(); // Prevent card click when clicking favorite
 
-    const storedUser = localStorage.getItem("user");
-    if (!storedUser) {
-      if (onRequireSignIn) {
-        onRequireSignIn("You must sign in before you can favorite");
-      }
+    if (favoriteBusy) {
       return;
     }
 
-    // Toggle local favorite state (no backend yet)
-    setIsFavorited((prev) => !prev);
+    if (onToggleFavorite) {
+      onToggleFavorite(vehicle, isFavorited, onRequireSignIn);
+    }
   }
 
   function handleCardClick() {
@@ -38,6 +40,7 @@ function VehicleCard({ vehicle, imageUrl, onRequireSignIn }) {
             className={`favorite-btn ${isFavorited ? "favorited" : ""}`}
             onClick={onFavoriteClick}
             aria-label={isFavorited ? "Unfavorite" : "Favorite"}
+            disabled={favoriteBusy}
           >
             {isFavorited ? "💗" : "🤍"}
           </button>
