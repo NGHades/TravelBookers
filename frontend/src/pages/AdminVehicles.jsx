@@ -349,7 +349,6 @@ function AdminVehicles() {
             Next
           </button>
         </footer>
-        )}
       </section>
       {showDeleteModal && (
         <ConfirmModal

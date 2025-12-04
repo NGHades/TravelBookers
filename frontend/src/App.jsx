@@ -11,7 +11,9 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminVehicles from "./pages/AdminVehicles";
 import AdminUserManagement from "./pages/AdminUserManagement";
+import AdminRentals from "./pages/AdminRentals";
 import VehicleDetail from "./pages/VehicleDetail";
+import RentalCheckout from "./pages/RentalCheckout";
 import SignInModal from "./components/SignInModal";
 
 function App() {
@@ -35,7 +37,11 @@ function App() {
       {!isAdminRoute && <NavBar onRequireSignIn={openSignInModal} />}
       <Routes>
         <Route path="/" element={<Home onRequireSignIn={openSignInModal} />} />
-        <Route path="/vehicles/:id" element={<VehicleDetail />} />
+        <Route
+          path="/vehicles/:id"
+          element={<VehicleDetail onRequireSignIn={openSignInModal} />}
+        />
+        <Route path="/checkout" element={<RentalCheckout />} />
         <Route path="/reservations" element={<Reservations />} />
         <Route path="/deals" element={<Deals />} />
         <Route path="/locations" element={<Locations />} />
@@ -44,6 +50,7 @@ function App() {
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/vehicles" element={<AdminVehicles />} />
         <Route path="/admin/users" element={<AdminUserManagement />} />
+        <Route path="/admin/rentals" element={<AdminRentals />} />
       </Routes>
       <SignInModal
         isOpen={isSignInModalOpen}

@@ -85,7 +85,18 @@ export const getRental = async (req, res) => {
 };
 
 export const createRental = async (req, res) => {
-  const { user_id, vehicle_id, start_date, end_date, status } = req.body;
+  const {
+    user_id,
+    vehicle_id,
+    start_date,
+    end_date,
+    status,
+    insurance_purchased,
+    first_name,
+    last_name,
+    phone,
+    email,
+  } = req.body;
 
   if (!user_id || !vehicle_id || !start_date || !end_date) {
     return res
@@ -112,10 +123,42 @@ export const createRental = async (req, res) => {
 
   try {
     const newRental = await sql`
-      INSERT INTO rentals (user_id, vehicle_id, start_date, end_date, status)
-      VALUES (${user_id}, ${vehicle_id}, ${start_date}, ${end_date}, ${status || "active"})
+      INSERT INTO rentals (
+        user_id,
+        vehicle_id,
+        start_date,
+        end_date,
+        status,
+        insurance_purchased,
+        first_name,
+        last_name,
+        phone,
+        email
+      )
+      VALUES (
+        ${user_id},
+        ${vehicle_id},
+        ${start_date},
+        ${end_date},
+        ${status || "active"},
+        ${insurance_purchased ?? false},
+        ${first_name || null},
+        ${last_name || null},
+        ${phone || null},
+        ${email || null}
+      )
       RETURNING *
     `;
+
+    // When a rental is created and becomes active, mark the vehicle as unavailable
+    const effectiveStatus = status || "active";
+    if (effectiveStatus === "active") {
+      await sql`
+        UPDATE vehicles
+        SET availability_status = FALSE
+        WHERE vehicle_id = ${vehicle_id}
+      `;
+    }
 
     res.status(201).json({ success: true, data: newRental[0] });
   } catch (error) {
@@ -131,7 +174,19 @@ export const createRental = async (req, res) => {
 
 export const updateRental = async (req, res) => {
   const { id } = req.params;
-  const { user_id, vehicle_id, start_date, end_date, status } = req.body;
+  const {
+    user_id,
+    vehicle_id,
+    start_date,
+    end_date,
+    status,
+    insurance_purchased,
+    first_name,
+    last_name,
+    phone,
+    email,
+    return_comment,
+  } = req.body;
 
   try {
     const currentRental = await sql`
@@ -149,6 +204,14 @@ export const updateRental = async (req, res) => {
     const updateStartDate = start_date !== undefined ? start_date : currentRental[0].start_date;
     const updateEndDate = end_date !== undefined ? end_date : currentRental[0].end_date;
     const updateStatus = status !== undefined ? status : currentRental[0].status;
+    const updateInsurance =
+      insurance_purchased !== undefined ? insurance_purchased : currentRental[0].insurance_purchased;
+    const updateFirstName = first_name !== undefined ? first_name : currentRental[0].first_name;
+    const updateLastName = last_name !== undefined ? last_name : currentRental[0].last_name;
+    const updatePhone = phone !== undefined ? phone : currentRental[0].phone;
+    const updateEmail = email !== undefined ? email : currentRental[0].email;
+    const updateReturnComment =
+      return_comment !== undefined ? return_comment : currentRental[0].return_comment;
 
     // Validate dates if both are being updated
     if (start_date !== undefined || end_date !== undefined) {
@@ -173,10 +236,38 @@ export const updateRental = async (req, res) => {
         vehicle_id = ${updateVehicleId},
         start_date = ${updateStartDate},
         end_date = ${updateEndDate},
-        status = ${updateStatus}
+        status = ${updateStatus},
+        insurance_purchased = ${updateInsurance},
+        first_name = ${updateFirstName},
+        last_name = ${updateLastName},
+        phone = ${updatePhone},
+        email = ${updateEmail},
+        return_comment = ${updateReturnComment}
       WHERE rental_id = ${id}
       RETURNING *
     `;
+
+    // If status changed, sync vehicle availability
+    const previousStatus = currentRental[0].status;
+    const newStatus = updatedRental[0].status;
+
+    // When rental becomes active, mark vehicle unavailable
+    if (previousStatus !== "active" && newStatus === "active") {
+      await sql`
+        UPDATE vehicles
+        SET availability_status = FALSE
+        WHERE vehicle_id = ${updatedRental[0].vehicle_id}
+      `;
+    }
+
+    // When rental leaves active state (cancelled/returned/etc.), mark vehicle available
+    if (previousStatus === "active" && newStatus !== "active") {
+      await sql`
+        UPDATE vehicles
+        SET availability_status = TRUE
+        WHERE vehicle_id = ${updatedRental[0].vehicle_id}
+      `;
+    }
 
     res.status(200).json({ success: true, data: updatedRental[0] });
   } catch (error) {

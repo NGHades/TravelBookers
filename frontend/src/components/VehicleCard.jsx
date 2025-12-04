@@ -49,9 +49,6 @@ function VehicleCard({ vehicle, imageUrl, onRequireSignIn }) {
         <p className="vehicle-price">
           ${Number(vehicle.price_per_day || 0).toFixed(2)}/day
         </p>
-        {vehicle.description && (
-          <p className="vehicle-description">{vehicle.description.substring(0, 100)}...</p>
-        )}
         
         {/* Vehicle Specs */}
         {(vehicle.passenger_count || vehicle.mpg || vehicle.drivetrain) && (

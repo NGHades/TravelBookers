@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import AdminNavBar from "../components/AdminNavBar";
+import AdminOverduePane from "../components/AdminOverduePane";
 import "../css/AdminDashboard.css";
 
 function AdminDashboard() {
@@ -13,6 +14,8 @@ function AdminDashboard() {
             <p>Welcome to the TravelBookers admin panel. Manage your fleet and operations.</p>
           </div>
         </header>
+
+        <AdminOverduePane />
 
         <div className="admin-dashboard__cards">
           <Link to="/admin/vehicles" className="admin-dashboard__card">

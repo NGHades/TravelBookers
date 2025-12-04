@@ -35,6 +35,42 @@
   flex-direction: column;
   gap: 2rem;
   margin-top: 1rem;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.vehicle-details-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 55%) minmax(0, 45%);
+  gap: 2rem;
+  width: 100%;
+}
+
+.vehicle-details-left,
+.vehicle-details-right {
+  width: 100%;
+}
+
+.vehicle-carousel-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .vehicle-carousel-card {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .vehicle-details-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* Carousel Styles with Swiper */
@@ -137,9 +173,18 @@
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  max-width: 700px;
-  margin: 0 auto;
   width: 100%;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .vehicle-info-section {
+    padding: 1.25rem;
+    border-radius: 12px;
+  }
 }
 
 .vehicle-title {
@@ -189,6 +234,10 @@
   margin-top: 1rem;
 }
 
+.vehicle-description.under-carousel {
+  margin-top: 1.5rem;
+}
+
 .vehicle-description h2 {
   font-size: 1.5rem;
   font-weight: 600;
@@ -204,15 +253,15 @@
 
 /* Vehicle Specifications */
 .vehicle-specifications {
-  margin-top: 1.5rem;
-  padding: 1.5rem;
+  margin-top: 1rem;
+  padding: 1rem;
   background: #f8fafc;
   border-radius: 12px;
   border: 1px solid #e2e8f0;
 }
 
 .vehicle-specifications h2 {
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 600;
   color: #022d57;
   margin-bottom: 1rem;
@@ -220,14 +269,14 @@
 
 .specs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
 }
 
 .spec-item {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.1rem;
 }
 
 .spec-label {
@@ -239,7 +288,7 @@
 }
 
 .spec-value {
-  font-size: 1.125rem;
+  font-size: 1rem;
   color: #022d57;
   font-weight: 600;
 }
@@ -412,6 +461,20 @@
   margin-top: 2rem;
   padding-top: 2rem;
   border-top: 2px solid #e2e8f0;
+}
+
+.vehicle-reviews-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+@media (max-width: 768px) {
+  .vehicle-reviews-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+  }
 }
 
 .comments-ratings-section h2 {

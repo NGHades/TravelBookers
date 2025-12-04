@@ -6,6 +6,7 @@ function AdminNavBar() {
     { label: "Dashboard", path: "/admin/dashboard" },
     { label: "Vehicles", path: "/admin/vehicles" },
     { label: "Users", path: "/admin/users" },
+    { label: "Rentals", path: "/admin/rentals" },
   ];
 
   return (

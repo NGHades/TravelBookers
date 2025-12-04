@@ -12,6 +12,7 @@ import imageRoutes from "./routes/imageRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
 import rentalRoutes from "./routes/rentalRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
+import paymentRoutes from "./routes/paymentRoutes.js";
 import { sql } from "./config/db.js"; //connector to database when "sql" is called
 import bcrypt from "bcrypt";
 // import { aj } from "./lib/arcjet.js"; //import arcjet instance for rate limiting and security
@@ -69,6 +70,7 @@ app.use("/api/images", imageRoutes);
 app.use("/api/favorites", favoriteRoutes);
 app.use("/api/rentals", rentalRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/payments", paymentRoutes);
 
 // Add a simple root route
 app.get("/", (req, res) => {
@@ -170,10 +172,28 @@ async function initDB() {
         start_date DATE NOT NULL,
         end_date DATE NOT NULL,
         status VARCHAR(50) NOT NULL DEFAULT 'active',
+        insurance_purchased BOOLEAN DEFAULT FALSE,
+        first_name VARCHAR(100),
+        last_name VARCHAR(100),
+        phone VARCHAR(50),
+        email VARCHAR(255),
+        return_comment TEXT,
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE RESTRICT,
         FOREIGN KEY (vehicle_id) REFERENCES vehicles(vehicle_id) ON DELETE RESTRICT
       )
     `;
+
+    // Ensure rentals has new columns for existing databases
+    try {
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS insurance_purchased BOOLEAN DEFAULT FALSE`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS first_name VARCHAR(100)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS last_name VARCHAR(100)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS phone VARCHAR(50)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS email VARCHAR(255)`;
+      await sql`ALTER TABLE rentals ADD COLUMN IF NOT EXISTS return_comment TEXT`;
+    } catch (alterError) {
+      console.log("Note: some rentals columns may already exist");
+    }
 
     // Create Comments table (depends on Users and Vehicles)
     await sql`
