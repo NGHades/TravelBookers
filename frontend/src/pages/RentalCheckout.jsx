@@ -71,16 +71,60 @@ function RentalCheckout() {
 
     if (status === "success") {
       // Prevent duplicate processing if effect runs multiple times
-      if (hasProcessedRef.current) {
+      if (hasProcessedRef.current || successInfo) {
+        // Already processed or has success info - don't try again
         return;
       }
 
       const stored = localStorage.getItem(PENDING_RENTAL_KEY);
       if (!stored) {
         // If no pending rental but status is success, rental may have already been processed
-        if (!hasProcessedRef.current) {
-          setError("We could not find your rental details. Please try again.");
-        }
+        // Check if user has recent rentals to confirm
+        const checkExistingRental = async () => {
+          try {
+            setProcessing(true);
+            const storedUser = localStorage.getItem("user");
+            let userId = null;
+            if (storedUser) {
+              try {
+                const parsed = JSON.parse(storedUser);
+                userId = parsed?.user_id || null;
+              } catch {
+                userId = null;
+              }
+            }
+
+            if (userId) {
+              // Check if user has a recent active rental
+              const res = await fetch(`${API_BASE}/api/rentals?user_id=${userId}&status=active`);
+              const data = await res.json();
+              
+              if (res.ok && data.success && data.data && data.data.length > 0) {
+                // Found active rentals - likely already processed
+                const recentRental = data.data[0];
+                setSuccessInfo({
+                  totalPaid: 0, // We don't have this info anymore
+                  receiptNumber: recentRental.rental_id,
+                });
+                hasProcessedRef.current = true;
+                setProcessing(false);
+                // Redirect after a delay
+                setTimeout(() => {
+                  navigate("/reservations");
+                }, 3000);
+                return;
+              }
+            }
+          } catch (err) {
+            console.error("Error checking existing rental:", err);
+          }
+          
+          // If we can't confirm it was processed, show helpful message instead of error
+          setProcessing(false);
+          setError("Your payment was successful! Please check your reservations page to view your booking. If you don't see it, please contact support.");
+        };
+
+        checkExistingRental();
         return;
       }
 
@@ -162,7 +206,7 @@ function RentalCheckout() {
 
       postRental();
     }
-  }, [status, navigate]);
+  }, [status, navigate, successInfo]);
 
   if (!status && !rentalContext) {
     return (
