@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import "../css/AdminDashboard.css";
 
@@ -24,6 +24,7 @@ function RentalCheckout() {
   const [error, setError] = useState("");
   const [processing, setProcessing] = useState(false);
   const [successInfo, setSuccessInfo] = useState(null);
+  const hasProcessedRef = useRef(false);
 
   const rentalContext = useMemo(() => {
     if (!state) return null;
@@ -54,6 +55,11 @@ function RentalCheckout() {
     };
   }, [state]);
 
+  // Reset processing flag when status changes
+  useEffect(() => {
+    hasProcessedRef.current = false;
+  }, [status]);
+
   // Handle Stripe returning to /checkout?status=success|cancel
   useEffect(() => {
     if (!status) return;
@@ -64,15 +70,26 @@ function RentalCheckout() {
     }
 
     if (status === "success") {
+      // Prevent duplicate processing if effect runs multiple times
+      if (hasProcessedRef.current) {
+        return;
+      }
+
       const stored = localStorage.getItem(PENDING_RENTAL_KEY);
       if (!stored) {
-        setError("We could not find your rental details. Please try again.");
+        // If no pending rental but status is success, rental may have already been processed
+        if (!hasProcessedRef.current) {
+          setError("We could not find your rental details. Please try again.");
+        }
         return;
       }
 
       const pending = JSON.parse(stored);
 
       const postRental = async () => {
+        // Mark as processing immediately to prevent duplicate calls
+        hasProcessedRef.current = true;
+        
         try {
           setProcessing(true);
           setError("");
@@ -94,8 +111,12 @@ function RentalCheckout() {
           if (!userId) {
             setError("We could not identify your account. Please sign in again and retry.");
             localStorage.removeItem(PENDING_RENTAL_KEY);
+            hasProcessedRef.current = false; // Reset on error
             return;
           }
+
+          // Remove from localStorage BEFORE creating rental to prevent duplicate processing
+          localStorage.removeItem(PENDING_RENTAL_KEY);
 
           const res = await fetch(`${API_BASE}/api/rentals`, {
             method: "POST",
@@ -127,14 +148,13 @@ function RentalCheckout() {
             receiptNumber: rental.rental_id,
           });
 
-          localStorage.removeItem(PENDING_RENTAL_KEY);
-
           setTimeout(() => {
             navigate("/reservations");
           }, 4000);
         } catch (err) {
           console.error("Error saving rental after payment:", err);
           setError("We received your payment but could not save the rental. Please contact support.");
+          hasProcessedRef.current = false; // Reset on error so user can retry
         } finally {
           setProcessing(false);
         }
