@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import AdminNavBar from "../components/AdminNavBar";
 import AdminOverduePane from "../components/AdminOverduePane";
+import RentalForm from "../components/admin/RentalForm";
+import RentalTable from "../components/admin/RentalTable";
+import ReturnModal from "../components/admin/ReturnModal";
 import "../css/AdminDashboard.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -62,12 +65,8 @@ function AdminRentals() {
     fetchVehicles();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+  const handleFormChange = (newForm) => {
+    setForm(newForm);
   };
 
   const handleSubmit = async (e) => {
@@ -152,7 +151,9 @@ function AdminRentals() {
   };
 
   const handleProcessReturn = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     if (!selectedRental) return;
     try {
       setProcessingReturn(true);
@@ -180,22 +181,6 @@ function AdminRentals() {
   const activeRentals = rentals.filter((r) => r.status === "active");
   const inactiveRentals = rentals.filter((r) => r.status !== "active");
 
-  const formatDate = (dateStr) => {
-    if (!dateStr) return "";
-    const d = new Date(dateStr);
-    if (Number.isNaN(d.getTime())) return dateStr;
-    return d.toLocaleDateString(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
-
-  const getVehicleLabel = (vehicleId) => {
-    const vehicle = vehicles.find((v) => v.vehicle_id === vehicleId);
-    if (!vehicle) return `Vehicle #${vehicleId}`;
-    return `${vehicle.year} ${vehicle.make} ${vehicle.model}`;
-  };
 
   return (
     <div className="admin-dashboard">
@@ -208,109 +193,12 @@ function AdminRentals() {
 
         <AdminOverduePane />
 
-        <section className="admin-card">
-          <h2>Add In-Person Rental</h2>
-          <form className="admin-form" onSubmit={handleSubmit}>
-            <div className="admin-form-grid">
-              <div className="admin-form-field">
-                <label htmlFor="first_name">First Name</label>
-                <input
-                  id="first_name"
-                  name="first_name"
-                  value={form.first_name}
-                  onChange={handleChange}
-                  placeholder="Customer first name"
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="last_name">Last Name</label>
-                <input
-                  id="last_name"
-                  name="last_name"
-                  value={form.last_name}
-                  onChange={handleChange}
-                  placeholder="Customer last name"
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="phone">Phone</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  value={form.phone}
-                  onChange={handleChange}
-                  placeholder="555-123-4567"
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="email">Email</label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={form.email}
-                  onChange={handleChange}
-                  placeholder="customer@example.com"
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="vehicle_id">Vehicle ID</label>
-                <input
-                  id="vehicle_id"
-                  name="vehicle_id"
-                  type="number"
-                  value={form.vehicle_id}
-                  onChange={handleChange}
-                  placeholder="Vehicle ID"
-                  required
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="start_date">Start Date</label>
-                <input
-                  id="start_date"
-                  name="start_date"
-                  type="date"
-                  value={form.start_date}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="admin-form-field">
-                <label htmlFor="end_date">End Date</label>
-                <input
-                  id="end_date"
-                  name="end_date"
-                  type="date"
-                  value={form.end_date}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-              <div className="admin-form-field checkbox-field">
-                <label htmlFor="insurance_purchased">
-                  Insurance purchased
-                  <input
-                    id="insurance_purchased"
-                    name="insurance_purchased"
-                    type="checkbox"
-                    checked={form.insurance_purchased}
-                    onChange={handleChange}
-                    style={{ marginLeft: "0.5rem" }}
-                  />
-                </label>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              className="admin-primary-btn"
-              disabled={submitting}
-            >
-              {submitting ? "Adding rental..." : "Add Rental"}
-            </button>
-          </form>
-        </section>
+        <RentalForm
+          form={form}
+          onChange={handleFormChange}
+          onSubmit={handleSubmit}
+          submitting={submitting}
+        />
 
         {error && <div className="admin-error-banner">{error}</div>}
 
@@ -325,61 +213,13 @@ function AdminRentals() {
               {activeRentals.length === 0 ? (
                 <p>No active rentals.</p>
               ) : (
-                <div className="admin-table-wrapper">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Customer</th>
-                        <th>Vehicle ID</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Insurance</th>
-                        <th>Actions</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {activeRentals.map((rental) => (
-                        <tr key={rental.rental_id}>
-                          <td>{rental.rental_id}</td>
-                          <td>
-                            {rental.first_name || rental.last_name
-                              ? `${rental.first_name || ""} ${rental.last_name || ""}`.trim()
-                              : `User #${rental.user_id}`}
-                            <br />
-                            {rental.email && <span className="admin-table-subtext">{rental.email}</span>}
-                            {rental.phone && (
-                              <span className="admin-table-subtext"> · {rental.phone}</span>
-                            )}
-                          </td>
-                          <td>
-                            {rental.vehicle_id} — {getVehicleLabel(rental.vehicle_id)}
-                          </td>
-                          <td>{formatDate(rental.start_date)}</td>
-                          <td>{formatDate(rental.end_date)}</td>
-                          <td>{rental.insurance_purchased ? "Yes" : "No"}</td>
-                          <td>
-                            <button
-                              className="admin-secondary-btn"
-                              onClick={() =>
-                                updateRentalStatus(rental.rental_id, "cancelled")
-                              }
-                            >
-                              Cancel Early
-                            </button>
-                            <button
-                              className="admin-secondary-btn"
-                              style={{ marginLeft: "0.5rem" }}
-                              onClick={() => openReturnModal(rental)}
-                            >
-                              Process Return
-                            </button>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <RentalTable
+                  rentals={activeRentals}
+                  vehicles={vehicles}
+                  onCancel={(rental) => updateRentalStatus(rental.rental_id, "cancelled")}
+                  onReturn={openReturnModal}
+                  showActions={true}
+                />
               )}
             </section>
 
@@ -388,89 +228,25 @@ function AdminRentals() {
               {inactiveRentals.length === 0 ? (
                 <p>No past or cancelled rentals.</p>
               ) : (
-                <div className="admin-table-wrapper">
-                  <table className="admin-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>Customer</th>
-                        <th>Vehicle ID</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Status</th>
-                        <th>Insurance</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inactiveRentals.map((rental) => (
-                        <tr key={rental.rental_id}>
-                          <td>{rental.rental_id}</td>
-                          <td>
-                            {rental.first_name || rental.last_name
-                              ? `${rental.first_name || ""} ${rental.last_name || ""}`.trim()
-                              : `User #${rental.user_id}`}
-                            <br />
-                            {rental.email && <span className="admin-table-subtext">{rental.email}</span>}
-                            {rental.phone && (
-                              <span className="admin-table-subtext"> · {rental.phone}</span>
-                            )}
-                          </td>
-                          <td>
-                            {rental.vehicle_id} — {getVehicleLabel(rental.vehicle_id)}
-                          </td>
-                          <td>{formatDate(rental.start_date)}</td>
-                          <td>{formatDate(rental.end_date)}</td>
-                          <td>{rental.status}</td>
-                          <td>{rental.insurance_purchased ? "Yes" : "No"}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                <RentalTable
+                  rentals={inactiveRentals}
+                  vehicles={vehicles}
+                  showActions={false}
+                />
               )}
             </section>
           </>
         )}
 
         {returnModalOpen && selectedRental && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h3>Process Vehicle Return</h3>
-              <p>
-                Mark rental #{selectedRental.rental_id} for vehicle #{selectedRental.vehicle_id} as
-                returned. You can add a return note below (condition, fuel level, etc.).
-              </p>
-              <form onSubmit={handleProcessReturn} className="admin-form">
-                <div className="admin-form-field">
-                  <label htmlFor="return_comment">Return Comment</label>
-                  <textarea
-                    id="return_comment"
-                    rows={4}
-                    value={returnComment}
-                    onChange={(e) => setReturnComment(e.target.value)}
-                    placeholder="Optional: note vehicle condition, mileage, fuel level, etc."
-                  />
-                </div>
-                <div className="form-actions" style={{ marginTop: "1rem" }}>
-                  <button
-                    type="button"
-                    className="secondary-btn"
-                    onClick={closeReturnModal}
-                    disabled={processingReturn}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="primary-btn"
-                    disabled={processingReturn}
-                  >
-                    {processingReturn ? "Processing..." : "Mark as Returned"}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
+          <ReturnModal
+            rental={selectedRental}
+            returnComment={returnComment}
+            onReturnCommentChange={setReturnComment}
+            onConfirm={handleProcessReturn}
+            onCancel={closeReturnModal}
+            processing={processingReturn}
+          />
         )}
       </div>
     </div>

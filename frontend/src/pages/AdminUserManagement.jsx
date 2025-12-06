@@ -1,5 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import AdminNavBar from "../components/AdminNavBar";
+import ConfirmModal from "../components/shared/ConfirmModal";
+import Pagination from "../components/shared/Pagination";
+import AddUserForm from "../components/admin/AddUserForm";
+import UserTable from "../components/admin/UserTable";
+import UserFilters from "../components/admin/UserFilters";
 import "../css/AdminDashboard.css";
 
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000";
@@ -161,28 +166,13 @@ function AdminUserManagement() {
           />
         )}
 
-        <section className="admin-dashboard__controls">
-          <input
-            type="search"
-            placeholder="Search by username or email"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-
-          <div className="admin-dashboard__filters">
-            <label>
-              Role
-              <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-                <option value="all">All Roles</option>
-                {roleOptions.map((role) => (
-                  <option key={role.role_id} value={role.role_id}>
-                    {role.role_name}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-        </section>
+        <UserFilters
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          roleFilter={roleFilter}
+          onRoleFilterChange={setRoleFilter}
+          roles={roleOptions}
+        />
 
         <section className="admin-dashboard__table">
           {loading ? (
@@ -190,66 +180,22 @@ function AdminUserManagement() {
           ) : paginatedUsers.length === 0 ? (
             <div className="admin-dashboard__state">No users found.</div>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Username</th>
-                  <th>Email</th>
-                  <th>Role</th>
-                  <th>Created</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedUsers.map((user) => (
-                  <tr key={user.user_id}>
-                    <td>{user.username}</td>
-                    <td>{user.email}</td>
-                    <td>{user.role_name || (user.role_id === 1 ? "admin" : "customer")}</td>
-                    <td>
-                      {user.created_at
-                        ? new Date(user.created_at).toLocaleDateString()
-                        : "—"}
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="danger-btn"
-                          onClick={() => {
-                            setUserToDelete(user);
-                            setShowDeleteModal(true);
-                          }}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <UserTable
+              users={paginatedUsers}
+              onDelete={(user) => {
+                setUserToDelete(user);
+                setShowDeleteModal(true);
+              }}
+            />
           )}
         </section>
 
-        <footer className="admin-dashboard__pagination">
-          <button
-            className="secondary-btn"
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
-            disabled={page === 1}
-          >
-            Previous
-          </button>
-          <span>
-            Page {page} of {totalPages}
-          </span>
-          <button
-            className="secondary-btn"
-            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-            disabled={page === totalPages}
-          >
-            Next
-          </button>
-        </footer>
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          variant="admin"
+        />
       </section>
 
       {showDeleteModal && (
@@ -264,121 +210,6 @@ function AdminUserManagement() {
         />
       )}
     </>
-  );
-}
-
-function AddUserForm({ roles, onSubmit, onCancel, submitting }) {
-  const [form, setForm] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role_id: roles[0]?.role_id || 2,
-  });
-
-  useEffect(() => {
-    if (!roles.length) return;
-    setForm((prev) => {
-      if (roles.some((role) => role.role_id === Number(prev.role_id))) {
-        return prev;
-      }
-      return { ...prev, role_id: roles[0].role_id };
-    });
-  }, [roles]);
-
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSubmit({
-      username: form.username,
-      email: form.email,
-      password: form.password,
-      role_id: Number(form.role_id),
-    });
-  };
-
-  return (
-    <form className="add-vehicle-form" onSubmit={handleSubmit}>
-      <div className="form-grid">
-        <label>
-          Username
-          <input
-            name="username"
-            value={form.username}
-            onChange={handleChange}
-            required
-            placeholder="jane.doe"
-          />
-        </label>
-        <label>
-          Email
-          <input
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            placeholder="jane@example.com"
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            minLength={6}
-            placeholder="At least 6 characters"
-          />
-        </label>
-        <label>
-          Role
-          <select name="role_id" value={form.role_id} onChange={handleChange}>
-            {roles.map((role) => (
-              <option key={role.role_id} value={role.role_id}>
-                {role.role_name}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <div className="form-actions">
-        <button type="button" className="secondary-btn" onClick={onCancel} disabled={submitting}>
-          Cancel
-        </button>
-        <button type="submit" className="primary-btn" disabled={submitting}>
-          {submitting ? "Saving..." : "Create User"}
-        </button>
-      </div>
-    </form>
-  );
-}
-
-function ConfirmModal({ title, message, onCancel, onConfirm }) {
-  return (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h3>{title}</h3>
-        <p>{message}</p>
-        <div className="modal-actions">
-          <button className="secondary-btn" onClick={onCancel}>
-            Cancel
-          </button>
-          <button className="danger-btn" onClick={onConfirm}>
-            Confirm
-          </button>
-        </div>
-      </div>
-    </div>
   );
 }
 
