@@ -7,7 +7,7 @@ function ReturnModal({ rental, returnComment, onReturnCommentChange, onConfirm, 
           Mark rental #{rental.rental_id} for vehicle #{rental.vehicle_id} as
           returned. You can add a return note below (condition, fuel level, etc.).
         </p>
-        <form onSubmit={(e) => { e.preventDefault(); onConfirm(); }} className="admin-form">
+        <form onSubmit={(e) => { e.preventDefault(); onConfirm(e); }} className="admin-form">
           <div className="admin-form-field">
             <label htmlFor="return_comment">Return Comment</label>
             <textarea

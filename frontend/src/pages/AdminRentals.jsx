@@ -151,7 +151,9 @@ function AdminRentals() {
   };
 
   const handleProcessReturn = async (e) => {
-    e.preventDefault();
+    if (e && e.preventDefault) {
+      e.preventDefault();
+    }
     if (!selectedRental) return;
     try {
       setProcessingReturn(true);
